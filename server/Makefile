@@ -5,7 +5,7 @@ dev:
 
 build-linux:
 	go build -o build/$(APP).linux main.go
-	cp build/$(APP).linux ../build
+	cp build/$(APP).linux ../build/$(APP).linux
 
 test:
 	go test ./...
