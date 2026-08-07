@@ -17,5 +17,7 @@ func UseRoutes(app *fiber.App) {
 	usePartyRoutes(api)
 	app.Get("/health", controllers.HelthController)
 	app.Get("/", controllers.DefaultHandeller)
+	// app.Get("/favicon.ico", controllers.DefaultHandeller)
 	app.Get("/swagger/*", swagger.HandlerDefault)
+	app.Get("*", controllers.PublicHandeller)
 }
