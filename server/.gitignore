@@ -1,0 +1,64 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Go build output
+/bin/
+/dist/
+/build/
+
+# Air
+/tmp/
+.air.toml
+
+# Test binaries
+*.test
+
+# Coverage reports
+*.coverprofile
+coverage.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database files (if using local SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Vendor (uncomment if you don't commit vendor)
+# vendor/
+
+# Generated docs (if using Swagger)
+docs/swagger.json
+docs/swagger.yaml
+
+# Local configuration
+config.local.*
