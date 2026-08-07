@@ -1,0 +1,36 @@
+{
+  "colors": {
+    "primary": "#10B981",
+    "primary_dark": "#059669",
+    "primary_light": "#D1FAE5",
+
+    "secondary": "#0F172A",
+
+    "background": "#F8FAFC",
+    "surface": "#FFFFFF",
+
+    "text": {
+      "primary": "#1E293B",
+      "secondary": "#64748B"
+    },
+
+    "border": "#E2E8F0",
+
+    "status": {
+      "income": "#22C55E",
+      "expense": "#EF4444",
+      "warning": "#F59E0B",
+      "info": "#3B82F6"
+    },
+
+    "dark": {
+      "background": "#0F172A",
+      "surface": "#1E293B",
+      "surface_elevated": "#334155",
+      "primary": "#10B981",
+      "text": "#F8FAFC",
+      "text_secondary": "#94A3B8",
+      "border": "#334155"
+    }
+  }
+}
