@@ -17,9 +17,11 @@ type Party struct {
 
 	Notes string `json:"notes,omitempty"`
 
-	IsActive bool  `gorm:"default:true" json:"is_active"`
-	Balance  int64 `gorm:"default:0" json:"balance"`
-
+	IsActive bool `gorm:"default:true" json:"is_active"`
+	// Balance  int64 `gorm:"default:0" json:"balance"`
+	Total        int64          `gorm:"->;default:0" json:"total"`
+	Paied        int64          `gorm:"->;default:0" json:"paied"`
+	Due          int64          `gorm:"->;default:0" json:"due"`
 	Transactions *[]Transaction `gorm:"foreignKey:PartyID" json:"transactions,omitempty"`
 }
 

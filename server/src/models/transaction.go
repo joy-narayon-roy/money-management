@@ -23,7 +23,7 @@ func (Transaction) TableName() string {
 	return "transaction"
 }
 
-func (t *Transaction) String() string {
+func (t Transaction) String() string {
 	return fmt.Sprintf(
 		"Transaction(id='%s', type='%s', amount=%d)",
 		t.ID,

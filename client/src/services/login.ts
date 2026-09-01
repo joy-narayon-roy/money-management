@@ -14,7 +14,6 @@ async function login(info: LoginPayload): Promise<string> {
     const new_err = new Error("failed to login");
     throw new_err;
   }
-  return "";
 }
 
 export default login;

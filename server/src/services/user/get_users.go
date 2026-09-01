@@ -16,16 +16,29 @@ func (UserServiceStruct) GetUsers(opt GetUsersOptions) ([]models.User, error) {
 	return users, nil
 }
 
-func (UserServiceStruct) GetUserByID(id string) (*models.User, error) {
-	var users models.User
+type UserResult struct {
+	models.User
+	Balance int64 `json:"balance"`
+}
+
+func (UserServiceStruct) GetUserByID(id string) (*UserResult, error) {
+	var users UserResult
 
 	err := config.DB.
 		Preload("Parties").
 		Preload("TransactionTemplates").
-		First(&users, "id = ?", id).Error
+		First(&users.User, "id = ?", id).Error
 
 	if err != nil {
 		return nil, err
 	}
+
+	current_balance, err := UserServiceStruct.GetUserCurrentBalance(UserServiceStruct{}, users.ID)
+
+	if err != nil {
+		return nil, err
+	}
+	users.Balance = current_balance.CurrentBalance
+
 	return &users, nil
 }

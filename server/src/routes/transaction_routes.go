@@ -12,5 +12,6 @@ func useTransactionRoutes(route fiber.Router) {
 	transaction_route := route.Group("transaction", middleware.JWTMiddleware)
 	transaction_route.Get("/", controllers.Transaction.GetTransaction)
 	transaction_route.Get("/types", controllers.Transaction.GetTransactionTypes)
+	transaction_route.Post("/bulk", controllers.Transaction.CreateBulkTransaction)
 	transaction_route.Post("/", controllers.Transaction.CreateTransaction)
 }

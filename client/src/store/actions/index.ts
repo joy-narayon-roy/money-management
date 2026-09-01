@@ -1,13 +1,13 @@
 // store/actions/index.ts
 import axios from "axios";
 import type { ThunkAction } from "redux-thunk";
-import type { AppAction, LoginCredentials, User } from "./types";
+import type { AppAction,  User } from "./types";
 import {
   SET_TOKEN,
   CLEAR_TOKEN,
-  AUTH_REQUEST,
-  AUTH_SUCCESS,
-  AUTH_FAILURE,
+  // AUTH_REQUEST,
+  // AUTH_SUCCESS,
+  // AUTH_FAILURE,
   CLEAR_AUTH_ERROR,
   SET_USER,
   CLEAR_USER,
@@ -103,7 +103,7 @@ export const fetchUserBalance = (): AppThunk => {
 // ======================================================
 // AUTH ACTIONS
 // ======================================================
-
+/*
 export const login = (credentials: LoginCredentials): AppThunk => {
   return async (dispatch) => {
     try {
@@ -137,6 +137,7 @@ export const login = (credentials: LoginCredentials): AppThunk => {
     }
   };
 };
+*/
 
 export const loadTokenAndUser = (): AppThunk => {
   return async (dispatch) => {
@@ -153,13 +154,13 @@ export const loadTokenAndUser = (): AppThunk => {
   };
 };
 
-export const logout = (): AppThunk => {
-  return (dispatch) => {
-    localStorage.removeItem("auth_token");
-    dispatch({ type: CLEAR_TOKEN });
-    dispatch({ type: CLEAR_USER });
-  };
-};
+// export const logout = (): AppThunk => {
+//   return (dispatch) => {
+//     localStorage.removeItem("auth_token");
+//     dispatch({ type: CLEAR_TOKEN });
+//     dispatch({ type: CLEAR_USER });
+//   };
+// };
 
 export const clearAuthError = (): AppAction => ({
   type: CLEAR_AUTH_ERROR,

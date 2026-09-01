@@ -3,7 +3,7 @@ package transaction
 import (
 	"fmt"
 	"mm/config"
-	"mm/src/dto"
+	"mm/src/dto/dto_transaction"
 	"mm/src/models"
 	"time"
 
@@ -11,16 +11,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func createIncomeTransaction(uid uuid.UUID, info dto.CreateTransactionRequest) (*models.Transaction, error) {
+func createExpenseTransaction(uid uuid.UUID, info dto_transaction.CreateTransactionRequest) (*models.Transaction, error) {
 	var user models.User
 	err := config.DB.Where("id = ?", uid).First(&user).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to find user and create transaction")
 	}
+
 	var party models.Party
 	err = config.DB.
 		Where(`
-			id = ? and user_id = ? and role = 'INCOME'
+			id = ? and user_id = ? and role = 'EXPENSE'
 		`, info.PartyID, uid).First(&party).Error
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
@@ -36,10 +37,9 @@ func createIncomeTransaction(uid uuid.UUID, info dto.CreateTransactionRequest) (
 		Type:        info.Type,
 		Amount:      int64(info.Amount),
 		Description: info.Description,
-		// TransactionDate: info.Date,
 	}
 	if info.Date != nil {
-		trans.Date, err = time.Parse("2006-01-02 15:04:05", *info.Date)
+		trans.Date, err = time.Parse("2006-01-02", *info.Date)
 		if err != nil {
 			trans.Date = time.Now()
 		}
@@ -55,10 +55,11 @@ func createIncomeTransaction(uid uuid.UUID, info dto.CreateTransactionRequest) (
 		return nil, err
 	}
 
-	if err := tx.Model(&party).Update("balance", party.Balance+trans.Amount).Error; err != nil {
-		tx.Rollback()
-		return nil, err
-	}
+	// old version where party balance need to update when transaction created
+	// if err := tx.Model(&party).Update("balance", party.Balance+trans.Amount).Error; err != nil {
+	// 	tx.Rollback()
+	// 	return nil, err
+	// }
 
 	// Commit
 	if err := tx.Commit().Error; err != nil {

@@ -1,25 +1,46 @@
 package transactioncontroller
 
 import (
-	"mm/src/dto"
+	"mm/src/dto/dto_transaction"
+	"mm/src/models"
 	"mm/src/services"
-	"mm/src/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
-func (TransactionControllerStruct) CreateTransaction(c *fiber.Ctx) error {
+type CreateTransactionResponse struct {
+	Transaction     *models.Transaction                         `json:"transaction"`
+	ValidationError *dto_transaction.TransactionValidationError `json:"validation_error"`
+	Error           string                                      `json:"error"`
+}
 
+func (TransactionControllerStruct) CreateTransaction(c *fiber.Ctx) error {
 	uid := c.Locals("userID").(uuid.UUID)
-	var info dto.CreateTransactionRequest
-	err := c.BodyParser(&info)
-	if err != nil {
-		return c.Status(400).JSON(utils.JSONMessage(err.Error()))
+
+	res := CreateTransactionResponse{}
+
+	req_info, validation_err, err := dto_transaction.CreateTransactionRequest.Parse(dto_transaction.CreateTransactionRequest{}, c.BodyRaw())
+
+	if err != nil || validation_err != nil {
+		if err != nil {
+			res.Error = err.Error()
+		}
+		res.ValidationError = validation_err
+		return c.Status(400).JSON(res)
 	}
-	tr, err := services.Transaction.Create(uid, info)
-	if err != nil {
-		return c.Status(200).JSON(utils.JSONMessage(err.Error()))
+
+	result, validation_err, err := services.Transaction.Create(uid, req_info)
+
+	if err != nil || validation_err != nil {
+		if err != nil {
+			res.Error = err.Error()
+		}
+		res.ValidationError = validation_err
+		return c.Status(400).JSON(res)
 	}
-	return c.Status(200).JSON(tr)
+
+	res.Transaction = result
+
+	return c.Status(200).JSON(res)
 }

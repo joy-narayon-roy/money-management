@@ -2,35 +2,88 @@ package transaction
 
 import (
 	"fmt"
-	"mm/src/dto"
+	"mm/config"
+	"mm/src/dto/dto_transaction"
 	"mm/src/models"
-	"mm/src/types"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-func validator(info dto.CreateTransactionRequest) error {
-	if info.Amount <= 0 {
-		return fmt.Errorf("amount must be more then 0")
+func (TransactionService) Create(uid uuid.UUID, info dto_transaction.CreateTransactionRequest) (*models.Transaction, *dto_transaction.TransactionValidationError, error) {
+	tr_party_role := string(info.Type)
+	tr_party_due := 0
+	if info.Type == models.TransactionTypeAPPayment {
+		tr_party_role = "AP"
+		tr_party_due = int(info.Amount)
+	} else if info.Type == models.TransactionTypeARPayment {
+		tr_party_due = int(info.Amount)
+		tr_party_role = "AR"
 	}
-	if info.PartyID == uuid.Nil {
-		return fmt.Errorf("invalid party id")
-	}
-	return nil
-}
 
-func (TransactionService) Create(uid uuid.UUID, info dto.CreateTransactionRequest) (*models.Transaction, error) {
+	var party models.Party
 
-	err := validator(info)
+	subQuery := config.DB.Table("party").
+		Select(`
+		party.id,
+		party.role,
+		CASE
+			WHEN party.role IN ('AP', 'AR') THEN COALESCE(t.total, 0) - COALESCE(t.paied, 0)
+			ELSE 0
+		END AS due
+	`).
+		Joins(`
+		LEFT JOIN (
+			SELECT party_id, SUM(
+					CASE
+						WHEN type IN (
+							'INCOME', 'EXPENSE', 'AP', 'AR'
+						) THEN amount
+						ELSE 0
+					END
+				) AS total, SUM(
+					CASE
+						WHEN type IN ('AR_PAYMENT', 'AP_PAYMENT') THEN amount
+						ELSE 0
+					END
+				) AS paied
+			FROM transaction
+			GROUP BY
+				party_id
+		) t ON t.party_id = party.id
+	`).
+		Where(`id = ? and user_id = ? and role = ?`, info.PartyID, uid, tr_party_role)
+
+	err := config.DB.
+		Table("(?) as pd", subQuery).
+		Where("due >= ?", tr_party_due).
+		First(&party).Error
+
 	if err != nil {
-		return nil, err
+		if err.Error() == gorm.ErrRecordNotFound.Error() {
+			em := "party infomation is not valid"
+			return nil, &dto_transaction.TransactionValidationError{PartyID: &em}, nil
+		}
+		return nil, nil, fmt.Errorf("failed to find party and create transaction")
 	}
-	switch info.Type {
-	case models.TransactionTypeIncome:
-		return createIncomeTransaction(uid, info)
-	case models.TransactionTypeExpense:
-		return createExpenseTransaction(uid, info)
-	default:
-		return nil, types.TransactionInvalidType
+
+	trans, verr := info.ConvertTransaction(uid)
+
+	if verr != nil {
+		return nil, verr, nil
 	}
+	// save start
+	tx := config.DB.Begin()
+
+	if err := tx.Create(&trans).Error; err != nil {
+		tx.Rollback()
+		return nil, nil, err
+	}
+
+	// Commit
+	if err := tx.Commit().Error; err != nil {
+		return nil, nil, err
+	}
+
+	return &trans, nil, nil
 }

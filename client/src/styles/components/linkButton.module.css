@@ -1,0 +1,16 @@
+@reference "../index.css"; /* ← adjust the path to your main Tailwind CSS file */
+
+.link-btn {
+  @apply flex h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60;
+
+  background-color: #153e30;
+  box-shadow: 0 8px 20px rgba(21, 62, 48, 0.18);
+}
+
+.link-btn:hover {
+  background-color: #1b4b3a;
+}
+
+.link-btn:active {
+  transform: scale(0.99);
+}
