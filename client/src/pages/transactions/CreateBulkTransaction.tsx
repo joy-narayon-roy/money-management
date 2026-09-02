@@ -145,6 +145,7 @@ export default function CreateBulkTransaction() {
 
     const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
+        onDateSortClick()
         setLoading(true)
         setValidationError([])
         services.transaction.createBulkTransaction(token, state)
@@ -178,9 +179,6 @@ export default function CreateBulkTransaction() {
                     console.log(err)
                 }
             })
-
-
-        console.log("Submitting:", state);
     };
 
     const deleteDraft = () => {
@@ -241,10 +239,10 @@ export default function CreateBulkTransaction() {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1">
                         <div className="lg:col-span-2">
                             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-                                <div className="border-b border-gray-200 p-6">
+                                <div className="border-b border-gray-200 px-4 py-3">
                                     <h2 className="text-base font-semibold text-gray-900">
                                         Transaction Details
                                     </h2>

@@ -1,0 +1,13 @@
+@import "../index.css";
+.modal_container {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4;
+}
+.modal{
+    @apply w-full max-w-lg rounded-xl bg-white shadow-2xl;
+}
+.modal_header{
+    @apply flex items-center justify-between border-b border-gray-200 px-6 py-4;
+}
+.modal_body{
+    @apply px-6 py-5;
+}

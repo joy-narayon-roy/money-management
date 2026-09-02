@@ -7,49 +7,6 @@ import {
 } from "lucide-react";
 import type { Summary } from "../../models/summary";
 
-/*const cards = [
-  {
-    title: "Total income",
-    amount: "৳125,000",
-    change: "+8.4%",
-    description: "vs. last month",
-    icon: ArrowDownLeft,
-    iconBg: "#ECFDF5",
-    iconColor: "#10B981",
-    changeColor: "#16A34A",
-  },
-  {
-    title: "Total expense",
-    amount: "৳82,400",
-    change: "+4.2%",
-    description: "vs. last month",
-    icon: ArrowUpRight,
-    iconBg: "#FEF2F2",
-    iconColor: "#EF4444",
-    changeColor: "#DC2626",
-  },
-  {
-    title: "Receivable",
-    amount: "৳32,500",
-    change: "6 pending",
-    description: "outstanding",
-    icon: Clock3,
-    iconBg: "#EFF6FF",
-    iconColor: "#3B82F6",
-    changeColor: "#3B82F6",
-  },
-  {
-    title: "Payable",
-    amount: "৳18,200",
-    change: "4 pending",
-    description: "outstanding",
-    icon: CircleDollarSign,
-    iconBg: "#FFFBEB",
-    iconColor: "#F59E0B",
-    changeColor: "#D97706",
-  },
-];
-*/
 interface CardStyle {
   title: string,
   amount: string,

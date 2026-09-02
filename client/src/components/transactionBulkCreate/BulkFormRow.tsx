@@ -267,7 +267,7 @@ export function BulkFormRowHeader({ onDateSortClick = () => { } }: { onDateSortC
             className={`py-2 grid grid-cols-[32px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_32px_32px] items-center gap-1 rounded-lg transition-all duration-150 text-center text-text-secondary text-sm`}
         >
             <span></span>
-            <span>Date <button onClick={onDateSortClick} className="p-1 hover:bg-gray-100 rounded"><ArrowDown size={10} /></button></span>
+            <span>Date <button type="button" onClick={onDateSortClick} className="p-1 hover:bg-gray-100 rounded"><ArrowDown size={10} /></button></span>
             <span>Type</span>
             <span>Description</span>
             <span>Amount</span>

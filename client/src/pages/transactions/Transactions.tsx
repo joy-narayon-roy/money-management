@@ -1,3 +1,4 @@
+// pages/Transactions.tsx
 import { Link, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import {
@@ -27,7 +28,7 @@ interface State {
     };
 }
 
-const Transactions = () => {
+function Transactions() {
     const { summary } = useSelector((s: RootState) => s.summary)
     const { token = "" } = useSelector((s: RootState) => s.auth)
     const [sp, setSp] = useSearchParams({
