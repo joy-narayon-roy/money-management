@@ -3,17 +3,13 @@ package party
 import (
 	"fmt"
 	"mm/config"
-	"mm/src/models"
+
+	"github.com/google/uuid"
 )
 
-type GetPartiesOptions struct {
-	Limit int `query:"limit" json:"limit"`
-	Page  int `query:"page" json:"page"`
-}
+func (PartyService) GetParties(uid uuid.UUID, opt GetPartiesOptions) (*GetPartiesResult, error) {
 
-func (PartyService) GetParties(opt GetPartiesOptions) ([]models.Party, error) {
-
-	var results []models.Party
+	results := GetPartiesResult{}
 
 	limit := opt.Limit
 	if limit <= 0 {
@@ -24,8 +20,10 @@ func (PartyService) GetParties(opt GetPartiesOptions) ([]models.Party, error) {
 		page = 1
 	}
 	offset := (page - 1) * limit
+	results.Pagination.Limit = limit
+	results.Pagination.Page = page
 
-	err := config.DB.Table("party").
+	query := config.DB.Table("party").
 		Select(`
 			party.*,
 			COALESCE(t.total, 0) AS total,
@@ -46,15 +44,23 @@ func (PartyService) GetParties(opt GetPartiesOptions) ([]models.Party, error) {
 				GROUP BY party_id
 			) t ON t.party_id = party.id
 		`).
-		Order("party.id").
-		Limit(limit).
-		Offset(offset).
-		Scan(&results).Error
+		Where("user_id = ?", uid)
+	if len(opt.Role) > 0 {
+		query = query.Where("role in (?)", opt.Role)
+	}
+	if opt.IsAcitve != nil {
+		query = query.Where("is_active = ?", *opt.IsAcitve)
+	}
+
+	query.Count(&results.Pagination.Total)
+
+	err := query.Order("party.id").Limit(limit).Offset(offset).Scan(&results.Parties).Error
 
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		return nil, err
 	}
 
-	return results, nil
+	results.Pagination.calculateTotalPages()
+	return &results, nil
 }
