@@ -168,9 +168,9 @@ export default function Preview() {
     };
 
     table_data = data.reduce<ReducerType>((pre, curr) => {
-      if (curr.type === "INCOME") {
+      if (curr.type === "INCOME" || curr.type ==="AR_PAYMENT" ||curr.type==="AP") {
         pre.total += Number(curr.amount);
-      } else if (curr.type === "EXPENSE") {
+      } else if (curr.type === "EXPENSE" || curr.type === "AR" || curr.type === "AP_PAYMENT") {
         pre.total -= Number(curr.amount);
       }
 
