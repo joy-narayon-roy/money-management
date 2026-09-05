@@ -31,7 +31,9 @@ func (UserServiceStruct) GetUserCurrentBalance(userID uuid.UUID) (*CurrentBalanc
 				CASE
 					WHEN type = 'INCOME' THEN amount
 					WHEN type = 'AR_PAYMENT' THEN amount
+					WHEN type = 'AP' THEN amount
 					WHEN type = 'EXPENSE' THEN -amount
+					WHEN type = 'AR' THEN -amount
 					WHEN type = 'AP_PAYMENT' THEN -amount
 					ELSE 0
 				END
