@@ -43,14 +43,14 @@ export function Topbar({
                 <button className="relative rounded-lg p-2 text-[#718079] hover:bg-[#F3F7F5]">
                     <Bell className="h-5 w-5" />
 
-                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-[#1C9A6E]" />
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-primary" />
                 </button>
 
                 <div className="h-7 w-px bg-[#E5EBE8]" />
 
                 {/* User */}
                 <button className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-[#F3F7F5]">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DDEFE7] text-xs font-bold text-[#197B5A]">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DDEFE7] text-xs font-bold text-primary-dark">
                         J
                     </div>
 

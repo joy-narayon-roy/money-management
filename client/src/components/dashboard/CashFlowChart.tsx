@@ -7,7 +7,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { Monthly } from "../../models/summary";
+import type { Monthly } from "../../types/summary";
+// import type { Monthly } from "../../models/summary";
 
 // const data = [
 //   {
@@ -65,7 +66,7 @@ export function CashFlowChart({ data = [] }: Props) {
             Cash flow
           </h3>
 
-          <p className="mt-1 text-xs text-[#89958F]">
+          <p className="mt-1 text-xs text-text-lite">
             Income vs expenses
           </p>
         </div>

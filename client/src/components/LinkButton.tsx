@@ -1,5 +1,5 @@
 import { Link, type To } from "react-router-dom"
-import style from '../styles/components/linkButton.module.css'
+import style from './styles/linkButton.module.css'
 
 interface Props {
     to?: To

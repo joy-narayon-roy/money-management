@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import type { User } from "../../types/user";
-import { addTransaction } from "./transactionReducer";
-import { loadTransaction } from "./transactionReducer/reducers";
-import { loadSummary } from "./userSummaryReducer";
+import type { User } from "../../../types/user";
+import { addTransaction } from "../transactionReducer";
+import { loadTransaction } from "../transactionReducer/reducers";
+import { loadSummary } from "../userSummaryReducer";
+import { addPartyReducer } from "./reducers";
+import api from "../../../api";
 
 export interface UserState {
   user: User | null;
@@ -17,11 +18,7 @@ export const loadUserByToken = createAsyncThunk(
     if (!token) {
       throw new Error("invalid token");
     }
-    const { data } = await axios.get<User>(`/api/user`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const { data } = await api.auth.getUserByToken(token);
 
     thunkAPI.dispatch(loadTransaction({ limit: 10, page: 1, token }));
     thunkAPI.dispatch(loadSummary(token));
@@ -38,7 +35,9 @@ const initialState: UserState = {
 const userSclice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    addParty: addPartyReducer,
+  },
   extraReducers: (builder) => {
     builder.addCase(loadUserByToken.pending, (state) => {
       state.loading = true;
@@ -68,5 +67,7 @@ const userSclice = createSlice({
     });
   },
 });
+
+export const { addParty } = userSclice.actions;
 
 export default userSclice.reducer;

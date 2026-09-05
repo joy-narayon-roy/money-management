@@ -1,11 +1,12 @@
+import api from "../../api";
+import { addTransaction } from "./transactionReducer";
+import type { Summary } from "../../types/summary";
 import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import type { Summary } from "../../models/summary";
-import { addTransaction } from "./transactionReducer";
-import services from "../../services";
+
 export interface SummaryState {
   loading: boolean;
   error: string | null;
@@ -19,7 +20,7 @@ export const loadSummary = createAsyncThunk(
     if (!token) {
       throw new Error("invalid token");
     }
-    return await services.getSummary(token);
+    return await api.summary.getSummary(token);
   },
 );
 

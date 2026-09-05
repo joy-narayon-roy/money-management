@@ -1,5 +1,5 @@
 import Dashboard from "./Dashboard";
-import Landing from "./landing";
+import Landing from "./landing/Landing";
 import Profile from "./Profile";
 // import Login from "./Login";
 // import Register from "./Register";

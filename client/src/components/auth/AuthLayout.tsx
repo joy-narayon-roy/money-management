@@ -18,7 +18,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
         <div className="mt-8 w-full">{children}</div>
 
-        <p className="mt-8 text-center text-xs text-[#89958F]">
+        <p className="mt-8 text-center text-xs text-text-lite">
           Simple. Clear. In control.
         </p>
       </div>

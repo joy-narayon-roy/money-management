@@ -1,7 +1,7 @@
 // store/actions/index.ts
 import axios from "axios";
 import type { ThunkAction } from "redux-thunk";
-import type { AppAction,  User } from "./types";
+import type { AppAction, User } from "./types";
 import {
   SET_TOKEN,
   CLEAR_TOKEN,
@@ -20,17 +20,12 @@ import type { RootState } from "../reducers";
 
 const API_URL = "/api"; // ← change this
 
-// Proper Thunk type (no any)
 type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
   unknown,
   AppAction
 >;
-
-// ======================================================
-// USER ACTIONS
-// ======================================================
 
 export const fetchUser = (): AppThunk => {
   return async (dispatch, getState) => {
@@ -73,8 +68,6 @@ export const fetchUserBalance = (): AppThunk => {
     }
 
     try {
-      // dispatch({ type: USER_REQUEST });
-
       const { data } = await axios.get<{
         balance: { current_balance: number };
       }>(`${API_URL}/user/balance`, {
@@ -100,45 +93,6 @@ export const fetchUserBalance = (): AppThunk => {
   };
 };
 
-// ======================================================
-// AUTH ACTIONS
-// ======================================================
-/*
-export const login = (credentials: LoginCredentials): AppThunk => {
-  return async (dispatch) => {
-    try {
-      dispatch({ type: AUTH_REQUEST });
-
-      const { data } = await axios.post<{ token: string }>(
-        `${API_URL}/auth/login`,
-        credentials,
-      );
-
-      localStorage.setItem("auth_token", data.token);
-
-      dispatch({
-        type: SET_TOKEN,
-        payload: data.token,
-      });
-      dispatch({ type: AUTH_SUCCESS });
-
-      // Fully typed – no `any`
-      dispatch(fetchUser());
-    } catch (error: unknown) {
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? String(error.response.data.message)
-          : "Login failed";
-
-      dispatch({
-        type: AUTH_FAILURE,
-        payload: message,
-      });
-    }
-  };
-};
-*/
-
 export const loadTokenAndUser = (): AppThunk => {
   return async (dispatch) => {
     const token = localStorage.getItem("auth_token");
@@ -153,14 +107,6 @@ export const loadTokenAndUser = (): AppThunk => {
     dispatch(fetchUserBalance());
   };
 };
-
-// export const logout = (): AppThunk => {
-//   return (dispatch) => {
-//     localStorage.removeItem("auth_token");
-//     dispatch({ type: CLEAR_TOKEN });
-//     dispatch({ type: CLEAR_USER });
-//   };
-// };
 
 export const clearAuthError = (): AppAction => ({
   type: CLEAR_AUTH_ERROR,

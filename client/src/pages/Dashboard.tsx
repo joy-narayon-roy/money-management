@@ -21,8 +21,7 @@ export default function Dashboard() {
   const { user } = useSelector((s: RootState) => s.user)
   const token = useSelector((s: RootState) => s.auth.token)
   const summaryState = useSelector((s: RootState) => s.summary)
-  // const transactionState = useSelector((s: RootState) => s.transaction)
-  // const { user: { user }, token, summaryState } = useSelector((s: RootState) => ({ user: s.user, token: s.auth.token, summaryState: s.summary }))
+
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -30,8 +29,6 @@ export default function Dashboard() {
     day: 'numeric'
   }).toUpperCase();
 
-
-  // console.log(transactionState)
 
   useEffect(() => {
     if (token && !summaryState.summaryLoaded) {
@@ -41,9 +38,9 @@ export default function Dashboard() {
 
 
   const { summary } = summaryState
+  console.log(summary)
 
   return (
-    // <DashboardLayout>
     <AppLayout>
       <div className="mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8">
         {/* Header */}
@@ -129,7 +126,7 @@ export default function Dashboard() {
 
             <div className="flex shrink-0 items-center gap-3">
               <div className="rounded-xl bg-white px-4 py-3 shadow-sm">
-                <p className="text-[10px] text-[#89958F]">
+                <p className="text-[10px] text-text-lite">
                   Net cash flow
                 </p>
 
@@ -139,7 +136,7 @@ export default function Dashboard() {
               </div>
 
               <div className="rounded-xl bg-white px-4 py-3 shadow-sm">
-                <p className="text-[10px] text-[#89958F]">
+                <p className="text-[10px] text-text-lite">
                   Savings rate
                 </p>
 

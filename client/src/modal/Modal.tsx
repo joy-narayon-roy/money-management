@@ -2,11 +2,11 @@ import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import style from '../styles/modal/modal.module.css'
 
-type ModalProps = {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function Modal({

@@ -1,6 +1,6 @@
 import LZString from 'lz-string';
 import { useSelector } from "react-redux";
-import type { CreateTransactionFormData, TransactionError } from "../../types/transaction";
+import type { CreateTransactionFormData, TransactionError, TransactionType } from "../../types/transaction";
 import type { RootState } from "../../store";
 import BulkFormRow, { BulkFormRowHeader } from "./BulkFormRow";
 import { BroomSparkles, Eye, Plus } from "lucide-react";
@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import { Create_Transaction_LIST, } from "../../types/preview";
 
 type Props = {
+    fixed_type?: TransactionType
+    fixed_date?: string
     transactions?: CreateTransactionFormData[];
     errors?: TransactionError[],
     draggedIndex?: number | null;
@@ -23,9 +25,12 @@ type Props = {
     addRow?: () => void
     clearData?: () => void
     onDateSortClick?: () => void
+    openTemplateModal?: (i: number) => void
 };
 
 export default function TransactionBulkForm({
+    fixed_type,
+    fixed_date,
     transactions = [],
     onChange = () => { },
     swapPosition = () => { },
@@ -40,6 +45,7 @@ export default function TransactionBulkForm({
     clearData = () => { },
     disabled = false,
     onDateSortClick = () => { },
+    openTemplateModal = () => { },
     errors = []
 }: Props) {
     const { user } = useSelector((state: RootState) => state.user);
@@ -72,9 +78,15 @@ export default function TransactionBulkForm({
 
     return (
         <div className="flex flex-col gap-1">
-            <BulkFormRowHeader onDateSortClick={onDateSortClick} />
+            <BulkFormRowHeader
+                fixed_date={fixed_date}
+                fixed_type={fixed_type}
+                onDateSortClick={onDateSortClick}
+            />
             {transactions.map((transaction, index) => (
                 <BulkFormRow
+                    fixed_date={fixed_date}
+                    fixed_type={fixed_type}
                     key={index}
                     index={index}
                     transaction={transaction}
@@ -90,6 +102,7 @@ export default function TransactionBulkForm({
                     onDragEnd={onDragEnd}
                     disabled={disabled}
                     error={errors[index]}
+                    openTemplateModal={openTemplateModal}
                 />
             ))}
 

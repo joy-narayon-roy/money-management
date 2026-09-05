@@ -10,50 +10,56 @@ import type {
 } from "../../types/transaction";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import services from "../../services";
 import { addTransaction } from "../../store/reducers/transactionReducer";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import Button from "../../components/Button";
-import { createNewTransaction, DRAFT_KEY, loadDraft } from "../../utils/transaction";
-import { Trash2 } from "lucide-react";
+import { Link, useNavigate, } from "react-router-dom";
+import { createNewTransaction, } from "../../utils/transaction";
 import axios from "axios";
+import ButtonPrimary from "../../components/ButtonPrimary";
+import ButtonCancel from "../../components/ButtonCancel";
+import type { Option } from "../../types/select_option";
+import PageHeading from "../../components/global/PageHeadeing";
+import api from "../../api";
 
 export default function CreateTransaction() {
-  const [sp] = useSearchParams({
-    draft: "0"
-  })
-  const isDraft = sp.get("draft") === "1"
+  // const [sp] = useSearchParams({
+  //   draft: "0"
+  // })
+  // const isDraft = sp.get("draft") === "1"
   const userState = useSelector((s: RootState) => s.user)
   const token = useSelector((s: RootState) => s.auth.token)
   const dispatch = useDispatch()
   const nav = useNavigate()
-  const draftTransactions = loadDraft(false)
-  const [form, setForm] = useState<CreateTransactionFormData>(isDraft ? loadDraft()[0] : createNewTransaction());
+  // const draftTransactions = loadDraft(false)
+  const [form, setForm] = useState<CreateTransactionFormData>(createNewTransaction());
   const [validationError, setValidationError] = useState<TransactionError>({})
 
-  const parties = (userState.user?.parties || [])
-    .filter(p => p.role === form.type)
-    .map(p => ({ value: p.id, lable: p.name }))
+  const roleForFormType: Record<string, string> = {
+    AP_PAYMENT: "AP",
+    AR_PAYMENT: "AR",
+  }
 
+  const parties = (userState.user?.parties || [])
+  const party_options: Option[] = parties
+    .filter(p => p.role === (roleForFormType[form.type] ?? form.type))
+    .map((p): Option => ({ value: p.id, label: p.name }))
 
   const handleChange = <K extends keyof CreateTransactionFormData>(field: K, value: CreateTransactionFormData[K]) => {
-    if (field === "type" && form.party_id === "") {
-      // Use the *new* type (value), not the old form.type
-      const party = (userState.user?.parties || []).filter(
-        (p) => p.role === value
-      )[0];
+    setForm((previous) => {
 
-      setForm((pre) => ({
-        ...pre,
-        [field]: value,
-        party_id: party?.id ?? "",
-      }));
-    } else {
-      setForm((previous) => ({
+      if (field === "party_id" && previous.description === "") {
+        previous.description = parties.filter(p => p.id === value)[0].description || ""
+      }
+      if (field === "amount") {
+        return {
+          ...previous,
+          amount: Number(String(value).replace(/^0+(?=\d)/, "")),
+        };
+      }
+      return {
         ...previous,
         [field]: value,
-      }));
-    }
+      }
+    });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -74,7 +80,7 @@ export default function CreateTransaction() {
 
     if (token) {
 
-      services.transaction.createTransaction(token, payload)
+      api.createTransaction(token, payload)
         .then(transaction => {
           dispatch(addTransaction({ transaction }))
           nav("/transactions")
@@ -95,10 +101,6 @@ export default function CreateTransaction() {
     }
   };
 
-  const deleteDraft = () => {
-    localStorage.removeItem(DRAFT_KEY)
-    nav("")
-  }
 
   const isPayment =
     form.type === "AR_PAYMENT" ||
@@ -108,46 +110,10 @@ export default function CreateTransaction() {
     <div className="px-4 py-2 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         {/* Page Header */}
-        <div className="mb-4">
-          <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-            <span>Transactions</span>
-
-            <span>/</span>
-
-            <span className="text-gray-700">
-              New Transaction
-            </span>
-          </div>
-
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Create Transaction
-          </h1>
-
-          <p className="text-sm text-gray-500">
-            Record a new financial transaction. <br />
-
-          </p>
-          <div className="flex flex-row items-center">
-            {draftTransactions.length > 0 ?
-              <>
-                <Link to={`?draft=1`} className="text-sm text-red-500">
-                  {`${draftTransactions.length} draft transaction${draftTransactions.length > 1 ? "s" : ""
-                    }`}
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => deleteDraft()}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600
-              "
-                  title="Delete"
-                  aria-label="Delete"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </>
-              : ""}
-          </div>
-        </div>
+        <PageHeading
+          breadcrumbs={[{ label: "Transactions", to: "/transactions" }, { label: "New Transaction" }]}
+          title="Create Transaction"
+        />
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -169,29 +135,24 @@ export default function CreateTransaction() {
                   <TransactionForm
                     validation_error={validationError}
                     form={form}
-                    parties={parties || []}
+                    parties={party_options || []}
                     onChange={handleChange}
                   />
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50/50 px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      window.history.back()
-                    }
-                    className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
 
-                  <Button type="submit">
+                  <ButtonCancel
+                    onClick={() => window.history.back()}
+                  />
+                  <ButtonPrimary
+                    type="submit">
                     {isPayment
                       ? "Record Payment"
                       : "Create Transaction"}
 
-                  </Button>
+                  </ButtonPrimary>
                 </div>
 
                 {/* Others */}
@@ -205,7 +166,7 @@ export default function CreateTransaction() {
             <div>
               <TransactionSummary
                 form={form}
-                parties={parties}
+                parties={party_options}
               />
             </div>
           </div>

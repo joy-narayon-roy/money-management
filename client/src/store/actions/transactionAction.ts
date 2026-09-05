@@ -1,5 +1,5 @@
 import type { Transaction } from "../../types/transaction";
-import type { TransactionState } from "../reducers/tranactionReducer";
+import type { TransactionState } from "../reducers/transactionReducer";
 
 export const addTransactionAction = (
   state: TransactionState,

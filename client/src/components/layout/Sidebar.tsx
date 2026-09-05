@@ -50,6 +50,7 @@ const mainNavigation: NavigationItem[] = [
 
 const financeNavigation: NavigationItem[] = [
     {
+        
         name: "Receivables",
         href: "/receivables",
         icon: ArrowDownLeft,
@@ -125,7 +126,7 @@ export function Sidebar({
                             text-[#718079]
                             transition
                             hover:bg-[#F3F7F5]
-                            hover:text-[#153E30]
+                            hover:text-primary-hover
                             lg:hidden
                         "
                     >
@@ -307,8 +308,8 @@ function TransactionNavigation({
                     text-sm
                     transition
                     ${isTransactionRoute
-                        ? "bg-[#E8F5EF] font-semibold text-[#197B5A]"
-                        : "text-[#718079] hover:bg-[#F3F7F5] hover:text-[#153E30]"
+                        ? "bg-[#E8F5EF] font-semibold text-primary"
+                        : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
                     }
                 `}
             >
@@ -334,48 +335,6 @@ function TransactionNavigation({
                         <CreateTransactionNavigation
                             onNavigate={onNavigate}
                         />
-
-                        {/* Incomes */}
-                        <NavLink
-                            to="/transactions/income"
-                            onClick={onNavigate}
-                            className={({ isActive }) => `
-                            mb-1
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            transition
-                            ${isActive
-                                    ? "font-semibold text-[#197B5A]"
-                                    : "text-[#718079] hover:bg-[#F3F7F5] hover:text-[#153E30]"
-                                }
-                        `}
-                        >
-                            Incomes
-                        </NavLink>
-
-                        {/* Expense */}
-                        <NavLink
-                            to="/transactions/expense"
-                            onClick={onNavigate}
-                            className={({ isActive }) => `
-                            mb-1
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            transition
-                            ${isActive
-                                    ? "font-semibold text-[#197B5A]"
-                                    : "text-[#718079] hover:bg-[#F3F7F5] hover:text-[#153E30]"
-                                }
-                        `}
-                        >
-                            Expense
-                        </NavLink>
                     </div>
                 )
             }
@@ -395,7 +354,7 @@ function CreateTransactionNavigation({
     const isCreateRoute =
         location.pathname === "/transactions/new" ||
         location.pathname.startsWith(
-            "/transactions/new/"
+            "/transactions/new"
         );
 
     const [isOpen, setIsOpen] = useState(isCreateRoute);
@@ -412,7 +371,7 @@ function CreateTransactionNavigation({
                     text-sm
                     transition
                     ${isCreateRoute
-                        ? "font-semibold text-[#197B5A]"
+                        ? "font-semibold text-primary"
                         : "text-[#718079]"
                     }
                 `}
@@ -432,7 +391,7 @@ function CreateTransactionNavigation({
                         py-2
                         transition
                         hover:bg-[#F3F7F5]
-                        hover:text-[#153E30]
+                        hover:text-primary-hover
                     "
                 >
                     <span className="truncate">
@@ -457,7 +416,7 @@ function CreateTransactionNavigation({
                         p-2
                         transition
                         hover:bg-[#F3F7F5]
-                        hover:text-[#153E30]
+                        hover:text-primary-hover
                     "
                 >
                     {isOpen ? (
@@ -484,17 +443,17 @@ function CreateTransactionNavigation({
                             text-sm
                             transition
                             ${isActive
-                                ? "font-semibold text-[#197B5A]"
-                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-[#153E30]"
+                                ? "font-semibold text-primary"
+                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
                             }
                         `}
                     >
-                        Bulk
+                        Multiple
                     </NavLink>
 
                     {/* Bulk Expense */}
                     <NavLink
-                        to="/transactions/new/bulk-expense"
+                        to="/transactions/new/bulk?type=expense"
                         onClick={onNavigate}
                         className={({ isActive }) => `
                             mb-1
@@ -505,8 +464,8 @@ function CreateTransactionNavigation({
                             text-sm
                             transition
                             ${isActive
-                                ? "font-semibold text-[#197B5A]"
-                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-[#153E30]"
+                                ? "font-semibold text-primary"
+                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
                             }
                         `}
                     >

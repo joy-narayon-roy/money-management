@@ -1,6 +1,7 @@
 import { MoreHorizontal } from "lucide-react";
 import { Link, } from "react-router-dom";
 import type { Transaction, TransactionType } from "../../types/transaction";
+import { useEffect, useState } from "react";
 
 
 const typeConfig: Record<
@@ -59,15 +60,16 @@ const formatDate = (date_str: string) => {
 
 type Props = {
   transactions?: Transaction[]
+  loading?: boolean
 }
 
 const TransactionTable = (props: Props) => {
-  const { transactions = [] } = props
+  const { transactions = [], loading = false } = props
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-212.5">
         <thead>
-          <tr className="border-b border-[#E2E8F0]">
+          <tr className="border-b border-border">
             <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Date
             </th>
@@ -97,6 +99,7 @@ const TransactionTable = (props: Props) => {
         </thead>
 
         <tbody>
+          {loading && <LoadingRow />}
           {transactions.map((transaction) => {
             const config = typeConfig[transaction.type];
             const positive = transaction.amount > 0;
@@ -104,16 +107,16 @@ const TransactionTable = (props: Props) => {
             return (
               <tr
                 key={transaction.id}
-                className="group border-b border-[#E2E8F0]/70 last:border-0 transition-colors hover:bg-[#F8FAFC]"
+                className="group border-b border-border/70 last:border-0 transition-colors hover:bg-background"
               >
-                <td className="px-6 py-4.5 text-sm text-[#64748B]">
+                <td className="px-6 py-4.5 text-sm text-text-secondary">
                   {formatDate(transaction.date)}
                 </td>
 
                 <td className="px-6 py-4.5">
                   <Link
                     to={`/transactions/${transaction.id}`}
-                    className="text-sm font-semibold text-[#1E293B] transition-colors hover:text-[#059669]"
+                    className="text-sm font-semibold text-text-primary transition-colors hover:text-primary-dark"
                   >
                     {transaction.description}
                   </Link>
@@ -142,7 +145,7 @@ const TransactionTable = (props: Props) => {
                   )} */}
                 </td>
 
-                <td className="px-6 py-4.5 text-sm text-[#64748B]">
+                <td className="px-6 py-4.5 text-sm text-text-secondary">
                   {transaction.type ?? "—"}
                 </td>
 
@@ -157,7 +160,7 @@ const TransactionTable = (props: Props) => {
                 <td className="px-4 py-4.5">
                   <button
                     type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] opacity-0 transition-all hover:bg-[#E2E8F0] hover:text-[#475569] group-hover:opacity-100"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] opacity-0 transition-all hover:bg-border hover:text-[#475569] group-hover:opacity-100"
                   >
                     <MoreHorizontal size={17} />
                   </button>
@@ -172,3 +175,27 @@ const TransactionTable = (props: Props) => {
 };
 
 export default TransactionTable;
+
+function LoadingRow() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount(prev => (prev + 1) % 4);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <tr>
+      <td className="text-center py-3.5 text-text-lite text-sm" style={{cursor:"progress"}} colSpan={6}>
+        Loading{".".repeat(count)}
+        <span className="invisible">{".".repeat(3 - count)}</span>
+      </td>
+    </tr>
+  );
+}
+

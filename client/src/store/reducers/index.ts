@@ -11,7 +11,6 @@ const rootReducer = combineReducers({
   user: userReducer,
   summary: userSummaryReducer,
   transaction: tranactionReducer,
-  // todo: todoReducer,
 });
 
 export default rootReducer;

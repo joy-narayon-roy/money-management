@@ -1,16 +1,8 @@
 import React from "react";
 
-import inputStyle from "../styles/components/input.module.css";
+import inputStyle from "./styles/input.module.css";
+import type { GroupOption, Option } from "../types/select_option";
 
-export type Option = {
-    label: string | number;
-    value: string | number;
-};
-
-export type GroupOption = {
-    label: string;
-    value: Option[] | GroupOption[];
-};
 
 interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
     options?: GroupOption[];

@@ -1,17 +1,15 @@
-import { Plus } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 import type { RootState } from "../../store";
-
+import { useParties } from "../../hooks/useParties";
+import type { PartyRoleType } from "../../types/party";
 import {
     PartyFilters,
     PartyPagination,
     PartyTable,
 } from "../../components/party";
+import PageHeading from "../../components/global/PageHeadeing";
 
-import { useParties } from "../../hooks/useParties";
-import type { PartyRoleType } from "../../types/party";
 
 
 export interface PartyQueryOptions {
@@ -23,9 +21,7 @@ export interface PartyQueryOptions {
 }
 
 function Parties() {
-    const { token = "" } = useSelector(
-        (state: RootState) => state.auth
-    );
+    const { token = "" } = useSelector((state: RootState) => state.auth);
 
     const [sp, setSp] = useSearchParams({
         limit: "10",
@@ -71,49 +67,21 @@ function Parties() {
         });
     };
 
-    // const {
-    //     parties = [],
-    //     pagination,
-    //     loading,
-    //     error,
-    // } = state;
+
+    console.log(parties)
 
     return (
-        <main className="min-h-full bg-[#F8FAFC]">
+        <main className="min-h-full bg-background">
             <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
 
                 {/* Header */}
-                <section className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p className="mb-2 text-sm font-medium text-[#10B981]">
-                            People &amp; businesses
-                        </p>
-
-                        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#1E293B]">
-                            Parties
-                        </h1>
-
-                        <p className="mt-1.5 text-sm text-[#64748B]">
-                            Manage your customers, suppliers and other parties.
-                        </p>
-                    </div>
-
-                    <Link
-                        to="/parties/new"
-                        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#10B981] px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(16,185,129,0.18)] transition-all hover:bg-[#059669] hover:shadow-[0_6px_18px_rgba(16,185,129,0.22)]"
-                    >
-                        <Plus
-                            className="h-4.5 w-4.5"
-                            strokeWidth={2.2}
-                        />
-
-                        Add party
-                    </Link>
-                </section>
-
+                <PageHeading
+                    title="Parties"
+                    create_button_path="new"
+                    create_button_text="Add Party"
+                />
                 {/* Parties */}
                 <section className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
-
                     {/* Filters */}
                     <div className="px-6 pt-6">
                         <PartyFilters

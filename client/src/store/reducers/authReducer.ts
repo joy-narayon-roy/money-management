@@ -28,6 +28,14 @@ const authSlice = createSlice({
       state.loading = false;
       state.token = null;
     },
+
+    loginByToken: (state, action: { type: string; payload: string }) => {
+      localStorage.setItem("auth_token", action.payload);
+      state.isLoggedIn = true;
+      state.error = null;
+      state.loading = false;
+      state.token = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(loginByEmailPassword.pending, (state) => {
@@ -54,11 +62,11 @@ const authSlice = createSlice({
       state.error = null;
       state.token = null;
       state.isLoggedIn = false;
-      localStorage.removeItem("auth_token")
-      localStorage.clear()
+      localStorage.removeItem("auth_token");
+      localStorage.clear();
     });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout,loginByToken } = authSlice.actions;
 export default authSlice.reducer;

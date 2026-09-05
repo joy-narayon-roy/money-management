@@ -1,8 +1,8 @@
-import axios from "axios";
 import type {
   CreateTransactionFormData,
   BulkTransactionResponse,
-} from "../../types/transaction";
+} from "../types/transaction";
+import { api } from "./api";
 
 export default async function createBulkTransaction(
   token: string | undefined | null,
@@ -11,8 +11,8 @@ export default async function createBulkTransaction(
   if (!token) {
     throw new Error("invalid token");
   }
-  const { data } = await axios.post<BulkTransactionResponse>(
-    `/api/transaction/bulk`,
+  const { data } = await api.post<BulkTransactionResponse>(
+    `transaction/bulk`,
     transactions,
     {
       headers: {

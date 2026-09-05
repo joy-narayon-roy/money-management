@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import type { Party } from "../types/party";
 import type { PaginationType } from "../types/pagination";
+import api from "../api";
 
 interface UsePartiesParams {
   search: string;
@@ -23,13 +23,11 @@ export function useParties(
   { search, role, status, page, limit }: UsePartiesParams,
 ): PartiesResult {
   const [parties, setParties] = useState<Party[]>([]);
-  //   const [total, setTotal] = useState(0);
-  //   const [totalPages, setTotalPages] = useState(0);
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationType>({
     page: 1,
     limit: 10,
     total: 0,
-    total_page: 0,
+    total_pages: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,18 +55,14 @@ export function useParties(
           params.set("is_active", status);
         }
 
-        const { data: result } = await axios.get<PartiesResult>(
-          `/api/party?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
+        const { data: result } = await api.party.getParties(
+          token,
+          params.toString(),
         );
 
-        setLoading(false)
-        setError(null)
-        setParties(result.parties ?? []);
+        setLoading(false);
+        setError(null);
+        setParties(result.parties||[]);
         setPagination((pre) => result.pagination || pre);
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") {

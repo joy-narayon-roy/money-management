@@ -31,8 +31,8 @@ export function StatCard({
                 {change !== undefined && (
                     <span
                         className={`flex items-center gap-0.5 text-xs font-semibold ${positive
-                                ? "text-[#1C9A6E]"
-                                : "text-[#E06C5B]"
+                                ? "text-income"
+                                : "text-expense"
                             }`}
                     >
                         {positive ? (
@@ -46,11 +46,11 @@ export function StatCard({
                 )}
             </div>
 
-            <p className="mt-4 text-xs font-medium text-[#89958F]">
+            <p className="mt-4 text-xs font-medium text-text-lite">
                 {title}
             </p>
 
-            <h3 className="mt-1 text-xl font-bold tracking-[-0.04em] text-[#18231F]">
+            <h3 className="mt-1 text-xl font-bold tracking-[-0.04em] text-text-primary">
                 {value}
             </h3>
 

@@ -18,9 +18,15 @@ func (PartyController) CreateParty(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(400).JSON(utils.JSONMessage("provide party infomation to create"))
 	}
-	party, err := services.Party.CreateParty(uid, party_info)
-	if err != nil {
-		return c.Status(400).JSON(utils.JSONMessage("failed to create party"))
+	party, verr, err := services.Party.CreateParty(uid, party_info)
+	res := dto.CreatePartyResponse{
+		Party:           party,
+		ValidationError: verr,
+		Error:           err,
 	}
-	return c.Status(200).JSON(party)
+
+	if err != nil {
+		return c.Status(400).JSON(res)
+	}
+	return c.Status(200).JSON(res)
 }

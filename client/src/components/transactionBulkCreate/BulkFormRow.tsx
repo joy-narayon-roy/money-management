@@ -5,60 +5,18 @@ import {
     Trash2,
     Copy,
     ArrowDown,
+    ClipboardCheck,
 } from "lucide-react";
 
-import type { CreateTransactionFormData, TransactionError } from "../../types/transaction";
+import type { CreateTransactionFormData, TransactionError, TransactionType } from "../../types/transaction";
 import type { Party } from "../../types/party";
 
 import Input from "../Input";
 import SelectInput from "../SelectInput";
-import type { GroupOption } from "../SelectGroupInput";
 import SelectGroupInput from "../SelectGroupInput";
+import data from "../../data";
+import type React from "react";
 
-
-
-
-const transactionTypeOptions: GroupOption[] = [
-    {
-        label: "General",
-        value: [
-            {
-                value: "INCOME",
-                label: "Income",
-            },
-            {
-                value: "EXPENSE",
-                label: "Expense",
-            },
-        ],
-    },
-    {
-        label: "Receivable",
-        value: [
-            {
-                value: "AR",
-                label: "Accounts Receivable",
-            },
-            {
-                value: "AR_PAYMENT",
-                label: "Accounts Receivable Payment",
-            },
-        ],
-    },
-    {
-        label: "Payable",
-        value: [
-            {
-                value: "AP",
-                label: "Accounts Payable",
-            },
-            {
-                value: "AP_PAYMENT",
-                label: "Accounts Payable Payment",
-            },
-        ],
-    },
-];
 
 
 
@@ -68,47 +26,38 @@ type Props = {
     parties?: Party[];
     disabled?: boolean,
     error?: TransactionError | null,
-    onChange?: (
-        index: number,
-        key: keyof CreateTransactionFormData,
-        value: string | number
-    ) => void;
-
-    swapPosition?: (
-        currentIndex: number,
-        newIndex: number
-    ) => void;
-
-    onDelete?: (index: number) => void;
-
-    onCopyDown?: (index: number) => void;
-
     isDragging?: boolean;
-
     isDragOver?: boolean;
-
+    fixed_type?: TransactionType
+    fixed_date?: string
+    onChange?: (index: number, key: keyof CreateTransactionFormData, value: string | number) => void;
+    swapPosition?: (currentIndex: number, newIndex: number) => void;
+    onDelete?: (index: number) => void;
+    onCopyDown?: (index: number) => void;
     onDragStart?: (index: number) => void;
-
     onDragOver?: (index: number) => void;
-
     onDragEnd?: () => void;
+    openTemplateModal?: (i: number) => void
 };
 
 export default function BulkFormRow(props: Props) {
     const {
-        transaction: { type, date = format(new Date(), "yyyy-MM-dd"), description = "", amount, party_id, },
         parties = [],
         index = 0,
         onChange = () => { },
         swapPosition = () => { },
         onDelete = () => { },
         onCopyDown = () => { },
-        isDragging = false,
-        isDragOver = false,
+        // isDragging = false,
+        // isDragOver = false,
         onDragStart = () => { },
         onDragOver = () => { },
         onDragEnd = () => { },
-        error: val_err
+        error: val_err,
+        fixed_type,
+        fixed_date,
+        transaction: { type, date = format(new Date(), "yyyy-MM-dd"), description = "", amount, party_id, },
+        openTemplateModal = () => { }
     } = props
 
     const currentIndex = Number(index);
@@ -118,6 +67,7 @@ export default function BulkFormRow(props: Props) {
         const value = event.target.value;
         onChange(currentIndex, name, value);
     };
+
     const filteredParties = [
         {
             label: "Select",
@@ -158,9 +108,26 @@ export default function BulkFormRow(props: Props) {
         swapPosition(draggedIndex, currentIndex);
     };
 
+    const grid_cols_length = () => {
+        let c = 5
+        if (fixed_type) {
+            c = c - 1
+        }
+        if (fixed_date) {
+            c = c - 1
+
+        }
+        return c
+    }
+
+    const style: React.CSSProperties = {
+        display: "grid",
+        gridTemplateColumns: `32px repeat(${grid_cols_length()}, 1fr) 64px`
+    }
     return (
         <div
-            className={`grid grid-cols-[32px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_32px_32px] items-center gap-1 rounded-lg transition-all duration-150 ${isDragging ? "bg-gray-50 shadow-sm ring-1 ring-gray-200" : ""} ${isDragOver && !isDragging ? "bg-gray-50 ring-1 ring-gray-200" : ""}`}
+            style={style}
+            className="gap-1"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
@@ -178,28 +145,37 @@ export default function BulkFormRow(props: Props) {
                 </button>
             </div>
 
-            <div>
-                <Input
-                    required
-                    name="date"
-                    type="date"
-                    value={date}
-                    onChange={handleChange}
-                    error={val_err?.date}
-                />
-            </div>
-            <div>
-                <SelectGroupInput
-                    required
-                    name="type"
-                    options={transactionTypeOptions}
-                    onChange={handleChange}
-                    value={type}
-                    error={val_err?.type}
+            {/* Date */}
+            {!fixed_date &&
+                <div>
+                    <Input
+                        required
+                        name="date"
+                        type="date"
+                        value={date}
+                        onChange={handleChange}
+                        error={val_err?.date}
+                    />
+                </div>
+            }
+
+            {/* Type */}
+            {(!fixed_type) &&
+                <div>
+                    <SelectGroupInput
+                        required
+                        name="type"
+                        options={data.options.transaction.group_type_options}
+                        onChange={handleChange}
+                        value={type}
+                        error={val_err?.type}
 
 
-                />
-            </div>
+                    />
+                </div>
+            }
+
+            {/* Description */}
             <div>
                 <Input
                     required
@@ -212,17 +188,19 @@ export default function BulkFormRow(props: Props) {
                 />
             </div>
 
+            {/* Amount */}
             <div>
                 <Input
                     required
                     type="number"
                     name="amount"
-                    value={amount}
+                    value={`${amount}`}
                     onChange={handleChange}
-                error={val_err?.amount}
+                    error={val_err?.amount}
                 />
             </div>
 
+            {/* Party */}
             <div>
                 <SelectInput
                     name="party_id"
@@ -233,7 +211,18 @@ export default function BulkFormRow(props: Props) {
                 />
             </div>
 
-            <div className="flex items-center justify-center">
+            {/* Actions */}
+            <div className="flex items-center justify-around">
+                <button
+                    type="button"
+                    onClick={() => openTemplateModal(currentIndex)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                    title="Copy down"
+                    aria-label="Copy down"
+                >
+                    <ClipboardCheck size={16} />
+                </button>
+
                 <button
                     type="button"
                     onClick={() => onDelete(currentIndex)}
@@ -244,9 +233,6 @@ export default function BulkFormRow(props: Props) {
                 >
                     <Trash2 size={16} />
                 </button>
-            </div>
-
-            <div className="flex items-center justify-center">
                 <button
                     type="button"
                     onClick={() => onCopyDown(currentIndex)}
@@ -261,17 +247,38 @@ export default function BulkFormRow(props: Props) {
     );
 }
 
-export function BulkFormRowHeader({ onDateSortClick = () => { } }: { onDateSortClick: () => void }) {
+export function BulkFormRowHeader({ fixed_type, fixed_date, onDateSortClick = () => { } }: { fixed_type?: TransactionType, fixed_date?: string, onDateSortClick: () => void }) {
+
+    const grid_cols_length = () => {
+        let c = 5
+        if (fixed_type) {
+            c = c - 1
+        }
+        if (fixed_date) {
+            c -= 1
+        }
+        return c
+    }
+
+    const style: React.CSSProperties = {
+        display: "grid",
+        gridTemplateColumns: `32px repeat(${grid_cols_length()}, 1fr) 64px`
+    }
+
     return (
         <div
-            className={`py-2 grid grid-cols-[32px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_32px_32px] items-center gap-1 rounded-lg transition-all duration-150 text-center text-text-secondary text-sm`}
+            className={`py-2 items-center gap-1 rounded-lg transition-all duration-150 text-center text-text-secondary text-sm`}
+            style={style}
         >
             <span></span>
-            <span>Date <button type="button" onClick={onDateSortClick} className="p-1 hover:bg-gray-100 rounded"><ArrowDown size={10} /></button></span>
-            <span>Type</span>
+            {(!fixed_date) && <span>
+                Date <button type="button" onClick={onDateSortClick} className="p-1 hover:bg-gray-100 rounded"><ArrowDown size={10} /></button>
+            </span>}
+            {(!fixed_type) && <span>Type</span>}
             <span>Description</span>
             <span>Amount</span>
             <span>Party</span>
+            <span></span>
         </div>
 
     )

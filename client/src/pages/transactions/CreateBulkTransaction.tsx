@@ -1,45 +1,43 @@
+import axios from "axios";
 import { useEffect, useState, type FormEvent } from "react";
-
-import Button from "../../components/Button";
 import { TransactionBulkForm } from "../../components/transactionBulkCreate";
-
-import type { BulkTransactionResponse, CreateTransactionFormData, TransactionError } from "../../types/transaction";
-import { Transaction } from "../../models";
-import { createNewTransaction, DRAFT_KEY, loadDraft } from "../../utils/transaction";
-import { Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import services from "../../services";
+import type { BulkTransactionResponse, CreateTransactionFormData, TransactionError, TransactionType } from "../../types/transaction";
+import { createNewTransaction, DRAFT_KEY, loadTransactionDraft, saveTransactionDraft } from "../../utils/transaction";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import axios from "axios";
+import ButtonPrimary from "../../components/ButtonPrimary";
+import ButtonCancel from "../../components/ButtonCancel";
+import PageHeading from "../../components/global/PageHeadeing";
+import api from "../../api";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import data from "../../data";
+import snake_to_titlecase from "../../utils/snake_to_titlecase";
+import TransactionTemplateModal from "../../modal/TransactionTemplateModal";
 
 
 
 export default function CreateBulkTransaction() {
     const { token } = useSelector((s: RootState) => s.auth)
-    const [state, setState] = useState<CreateTransactionFormData[]>(loadDraft);
+    const parties = useSelector((s: RootState) => s.user.user?.parties) || []
+
+    const [sp] = useSearchParams({})
+    const transaction_type_sp = (sp.get("type") || "").toUpperCase()
+    const fixed_transaction_type: TransactionType | null = data.options.transaction.types.filter(p => p === transaction_type_sp)[0] || null
+
+    const [templateModalShow, setTemplateModalShow] = useState<number>(-1)
+    const [state, setState] = useState<CreateTransactionFormData[]>(loadTransactionDraft({
+        notEmpty: true,
+        formData: {
+            type: fixed_transaction_type || undefined
+        }
+    }));
     const [loading, setLoading] = useState(false)
     const [validationError, setValidationError] = useState<TransactionError[]>([])
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-    // Save draft whenever state changes
-    useEffect(() => {
-        const draftTransactions = state.filter((transaction) =>
-            Transaction.validate(transaction)
-        );
-
-        if (draftTransactions.length > 0) {
-            localStorage.setItem(
-                DRAFT_KEY,
-                JSON.stringify(draftTransactions)
-            );
-        }
-
-    }, [state]);
-
-    const draftTransactions = loadDraft(false)
+    const nav = useNavigate()
 
     const swapPosition = (currentIndex: number, newIndex: number) => {
         setState((prev) => {
@@ -74,28 +72,39 @@ export default function CreateBulkTransaction() {
     const handleInput = (index: number, key: keyof CreateTransactionFormData, value: string | number) => {
         setState((prev) =>
             prev.map((transaction, i) => {
-
-                if (key === "amount") {
-                    return i === index
-                        ? {
-                            ...transaction,
-                            [key]: Number(value),
-                        }
-                        : transaction
+                if (i !== index) {
+                    return transaction
                 }
 
-                return i === index
-                    ? {
+                if (fixed_transaction_type && transaction.type != fixed_transaction_type) {
+                    transaction.type = fixed_transaction_type
+                }
+
+                if (key === "party_id" && transaction.description === "") {
+                    transaction.description = parties.filter(p => p.id === value)[0]?.description || ""
+                }
+
+                if (key === "amount") {
+                    return {
                         ...transaction,
-                        [key]: value,
+                        amount: Number(String(value).replace(/^0+(?=\d)/, "")),
                     }
-                    : transaction
+                }
+
+                return {
+                    ...transaction,
+                    [key]: value,
+                }
             })
         );
     };
 
     const addRow = () => {
-        setState((prev) => [...prev, createNewTransaction()]);
+        const new_tr = createNewTransaction()
+        if (fixed_transaction_type) {
+            new_tr.type = fixed_transaction_type
+        }
+        setState((prev) => [...prev, new_tr]);
     };
 
     const deleteRow = (index: number) => {
@@ -126,6 +135,10 @@ export default function CreateBulkTransaction() {
         });
     };
 
+    const openTemplateModal = (index: number) => {
+        setTemplateModalShow(index)
+    }
+
     const handleDragStart = (index: number) => {
         setDraggedIndex(index);
     };
@@ -148,18 +161,45 @@ export default function CreateBulkTransaction() {
         onDateSortClick()
         setLoading(true)
         setValidationError([])
-        services.transaction.createBulkTransaction(token, state)
+        api.createBulkTransaction(token, state)
             .then(data => {
-                Object.entries(data.validation_errors).forEach(([i, tr_err]) => {
-                    if (!tr_err) {
-                        setState(pr => [...pr.filter((_, ind) => ind !== Number(i))])
-                    } else {
-                        setValidationError(pre => {
-                            pre.push(tr_err)
-                            return [...pre]
-                        })
+                deleteDraft()
+
+                type MapReducerType = {
+                    state: (CreateTransactionFormData | null)[];
+                    val_errors: TransactionError[];
+                };
+
+                const val_err = Object.values(data.validation_errors).map(d => d)
+
+                const { state: new_state, val_errors: new_val_err } = val_err.reduce<MapReducerType>((pre: MapReducerType, curr, i) => {
+                    pre.state = pre.state.map((v, ci) => {
+                        if ((!curr) && ci === i) {
+                            return null
+                        }
+                        return v
+                    })
+
+                    if (curr) {
+                        pre.val_errors.push(curr)
                     }
+                    return pre
+                }, {
+                    state: [...state],
+                    val_errors: []
                 })
+
+
+                if (new_state.length === 0 || new_val_err.length === 0) {
+                    deleteDraft()
+                    nav("/transactions")
+                } else {
+                    setState(new_state.filter(
+                        (v): v is CreateTransactionFormData => v !== null
+                    ))
+                    setValidationError(new_val_err)
+                }
+
                 setLoading(false)
                 deleteDraft()
 
@@ -183,7 +223,6 @@ export default function CreateBulkTransaction() {
 
     const deleteDraft = () => {
         localStorage.removeItem(DRAFT_KEY)
-        // setState([createNewTransaction()])
     }
     const clearData = () => {
         const ok = confirm("Want to clean Transactions?")
@@ -194,49 +233,24 @@ export default function CreateBulkTransaction() {
         setState([createNewTransaction()])
     }
 
+    useEffect(() => {
+        saveTransactionDraft(state)
+    }, [state])
+
+    const transaction_type_title = snake_to_titlecase(fixed_transaction_type || "")
+
     return (
         <div className="px-4 py-6 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
-                <div className="mb-4">
-                    <div className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                        <span>Transactions</span>
 
-                        <span>/</span>
-
-                        <span className="text-gray-700">
-                            New Transaction
-                        </span>
-                    </div>
-
-                    <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-                        Create Transaction
-                    </h1>
-
-                    <p className="text-sm text-gray-500">
-                        Record a new financial transaction. <br />
-
-                    </p>
-                    <div className="flex flex-row items-center">
-                        {draftTransactions.length > 0 ?
-                            <>
-                                <Link to={`?draft=1`} className="text-sm text-red-500">
-                                    {`${draftTransactions.length} draft transaction${draftTransactions.length > 1 ? "s" : ""
-                                        }`}
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={() => deleteDraft()}
-                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600
-              "
-                                    title="Delete"
-                                    aria-label="Delete"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </>
-                            : ""}
-                    </div>
-                </div>
+                <PageHeading
+                    breadcrumbs={[{ label: "Transactions", to: "/transactions" }, { label: "New Bulk " + transaction_type_title + " Transaction" }]}
+                    title={`Create Bulk ${transaction_type_title} Transaction`}
+                />
+                <TransactionTemplateModal
+                    isOpen={templateModalShow >= 0}
+                    onClose={() => setTemplateModalShow(-1)}
+                />
 
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1">
@@ -253,42 +267,40 @@ export default function CreateBulkTransaction() {
                                     </p>
                                 </div>
 
-                                <div className="p-4">
+                                <div className="py-4 px-2">
                                     <TransactionBulkForm
+                                        fixed_date={fixed_transaction_type}
+                                        fixed_type={fixed_transaction_type}
                                         transactions={state}
                                         errors={validationError}
+                                        dragOverIndex={dragOverIndex}
+                                        draggedIndex={draggedIndex}
+                                        disabled={loading}
+                                        onDragStart={handleDragStart}
                                         onChange={handleInput}
                                         swapPosition={swapPosition}
                                         onDelete={deleteRow}
                                         onCopyDown={copyDown}
-                                        draggedIndex={draggedIndex}
-                                        dragOverIndex={dragOverIndex}
-                                        onDragStart={handleDragStart}
                                         onDragOver={handleDragOver}
                                         onDragEnd={handleDragEnd}
                                         addRow={addRow}
                                         clearData={clearData}
-                                        disabled={loading}
                                         onDateSortClick={onDateSortClick}
+                                        openTemplateModal={openTemplateModal}
                                     />
                                 </div>
 
                                 <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50/50 px-6 py-4">
-                                    <button
+                                    <ButtonCancel
                                         disabled={loading}
-                                        type="button"
                                         onClick={() => window.history.back()}
-                                        className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                                    >
-                                        Cancel
-                                    </button>
-
-                                    <Button
+                                    />
+                                    <ButtonPrimary
                                         type="submit"
                                         disabled={loading}
                                     >
                                         Create Transaction
-                                    </Button>
+                                    </ButtonPrimary>
                                 </div>
                             </div>
                         </div>

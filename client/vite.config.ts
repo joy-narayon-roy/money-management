@@ -16,14 +16,14 @@ export default defineConfig({
   server: {
 	host:true,
     port: 3000,
-    proxy: {
-      "/api": {
-        target: "http://localhost:8080", // your backend server
-        changeOrigin: true,
-        secure: false,
-        // optional: strip /api prefix before forwarding
-        // rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     target: "http://localhost:8080", // your backend server
+    //     changeOrigin: true,
+    //     secure: false,
+    //     // optional: strip /api prefix before forwarding
+    //     // rewrite: (path) => path.replace(/^\/api/, ''),
+    //   },
+    // },
   },
 });

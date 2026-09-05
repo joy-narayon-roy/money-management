@@ -1,10 +1,11 @@
+import type { Option } from "../../types/select_option";
 import type {
   CreateTransactionFormData,
 } from "../../types/transaction";
 
 interface TransactionSummaryProps {
   form: CreateTransactionFormData;
-  parties: { lable: string, value: string }[]
+  parties: Option[]
 }
 
 const typeLabels: Record<string, string> = {
@@ -63,7 +64,7 @@ export default function TransactionSummary({
             </p>
 
             <p className="mt-1 text-sm font-medium text-gray-900">
-              {parties.filter(p => p.value === form.party_id)[0]?.lable ?? "-"}
+              {parties.filter(p => p.value === form.party_id)[0]?.label ?? "-"}
             </p>
           </div>
         )}

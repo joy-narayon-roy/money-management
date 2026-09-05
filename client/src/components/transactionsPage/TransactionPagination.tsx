@@ -10,10 +10,12 @@ type Pagination = {
 type Props = {
   pagination?: Pagination;
   goToPage?: (page: number) => void;
+  openPreview?: () => void
 };
 
 const TransactionPagination = ({
   pagination = {},
+  openPreview = () => { },
   goToPage = () => { },
 }: Props) => {
   const {
@@ -60,6 +62,10 @@ const TransactionPagination = ({
         <span className="font-medium text-[#1E293B]">{total}</span>
       </p>
 
+      <div className="">
+        <button onClick={openPreview}>Open Previews</button>
+      </div>
+
       <div className="flex items-center gap-1">
         <button
           disabled={currentPage <= 1}
@@ -74,8 +80,8 @@ const TransactionPagination = ({
             key={page}
             onClick={() => goToPage(page)}
             className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${page === currentPage
-                ? "bg-[#D1FAE5] text-[#059669]"
-                : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]"
+              ? "bg-[#D1FAE5] text-[#059669]"
+              : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]"
               }`}
           >
             {page}

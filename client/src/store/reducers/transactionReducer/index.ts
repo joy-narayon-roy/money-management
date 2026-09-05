@@ -38,8 +38,8 @@ const transactionSlice = createSlice({
       const { payload } = action;
       state.loading = false;
       state.error = null;
-      state.total = action.payload.total;
-      const offset = payload.limit * (payload.page - 1);
+      state.total = payload.pagination.limit;
+      const offset = payload.pagination.limit * (payload.pagination.page - 1);
       if (offset >= state.offset) {
         state.offset = offset;
       }

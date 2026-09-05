@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -30,6 +31,15 @@ func ConnectDB() error {
 		return err
 	}
 
+	DB = db
+	return nil
+}
+
+func ConnectSqlDB() error {
+	db, err := gorm.Open(sqlite.Open("./app.db"), &gorm.Config{})
+	if err != nil {
+		return err
+	}
 	DB = db
 	return nil
 }

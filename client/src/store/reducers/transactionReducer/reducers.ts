@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import type { TransactionState } from ".";
 import type { Transaction } from "../../../types/transaction";
-import axios from "axios";
+import api from "../../../api";
 
 export const addTransactionReducer: CaseReducer<
   TransactionState,
@@ -38,27 +38,18 @@ export const loadTransaction = createAsyncThunk(
     option: LoadTransactionOption,
   ): Promise<{
     transactions: Transaction[];
-    total: number;
-    limit: number;
-    page: number;
-  }> => {
-    const sp = new URLSearchParams({
-      limit: `${option.limit}`,
-      page: `${option.page}`,
-    });
-    interface Response {
+    pagination: {
+      page: number;
+      limit: number;
       total: number;
-      transactions: Transaction[];
-    }
-    const { data } = await axios.get<Response>(
-      `/api/transaction?${sp.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${option.token}`,
-        },
-      },
-    );
+      total_pages: number;
+    };
+  }> => {
+    const { token, ...opt } = option;
+    const data = await api.getTransactions(token, {
+      ...opt,
+    });
 
-    return { ...data, ...option };
+    return data;
   },
 );

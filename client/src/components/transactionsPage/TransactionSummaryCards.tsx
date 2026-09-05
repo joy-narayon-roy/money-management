@@ -5,7 +5,7 @@ import {
   Clock3,
   type LucideProps,
 } from "lucide-react";
-import type { Summary } from "../../models/summary";
+import type { Summary } from "../../types/summary";
 
 interface CardStyle {
   title: string,
@@ -84,7 +84,7 @@ const TransactionSummaryCards = (props: Props) => {
     return pre
   }, [])
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
 
@@ -95,11 +95,11 @@ const TransactionSummaryCards = (props: Props) => {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[13px] font-medium text-[#64748B]">
+                <p className="text-[13px] font-medium text-text-secondary">
                   {card.title}
                 </p>
 
-                <p className="mt-3 text-[25px] font-semibold tracking-tight text-[#1E293B]">
+                <p className="mt-3 text-[25px] font-semibold tracking-tight text-text-primary">
                   {card.amount}
                 </p>
               </div>

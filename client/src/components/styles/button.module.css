@@ -1,0 +1,13 @@
+@import "../../styles/index.css";
+
+.btn {
+  @apply flex h-11  items-center justify-center rounded-lg px-4 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60 bg-primary;
+}
+
+.btn:hover {
+  @apply bg-primary-dark;
+}
+
+.btn:active {
+  transform: scale(0.99);
+}

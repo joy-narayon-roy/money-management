@@ -3,7 +3,7 @@ import { type InputHTMLAttributes, forwardRef } from "react";
 interface AuthInputProps
     extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
-    error?: string;
+    error?: string|null;
 }
 
 export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(

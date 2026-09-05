@@ -1,5 +1,5 @@
 import React from 'react'
-import style from '../styles/components/input.module.css'
+import style from './styles/input.module.css'
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
     error?: string | null;
 }

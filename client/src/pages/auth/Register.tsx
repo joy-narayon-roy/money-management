@@ -1,57 +1,57 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, } from "lucide-react";
 
 import { AuthLayout } from "../../components/auth/AuthLayout";
 import { AuthCard } from "../../components/auth/AuthCard";
 import { AuthInput } from "../../components/auth/AuthInput";
 import { PasswordInput } from "../../components/auth/PasswordInput";
 import { AuthButton } from "../../components/auth/AuthButton";
+import useAuthRegistration from "../../hooks/useAuthRegistration";
+import ErrorMessage from "../../components/ErrorMessage";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store";
+import { loginByToken } from "../../store/reducers/authReducer";
+import { useEffect } from "react";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
-  const [loading, setLoading] = useState(false);
+  const {
+    loading,
+    error,
+    form,
+    validationError,
+    updateFormData,
+    submitFormData,
+    clearError
+  } = useAuthRegistration()
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
+  const { isLoggedIn } = useSelector((s: RootState) => s.auth)
+  const nav = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
+  const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+    ev.preventDefault()
+    submitFormData().then(token => {
+      if (token) {
+        localStorage.setItem("auth_token", token)
+        dispatch(loginByToken(token))
+      }
+    })
+  }
+
+  const handelChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const inp_name = ev.target.name as ("name" | "email" | "password" | "confirmPassword")
+    const inp_value = ev.target.value
+    updateFormData(inp_name, inp_value)
+  }
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      nav("/dashboard")
     }
+  }, [isLoggedIn, nav])
 
-    setLoading(true);
 
-    try {
-      // TODO:
-      // Call your Go/Fiber register API here.
-      //
-      // await register({
-      //   name,
-      //   email,
-      //   password,
-      // });
-
-      await new Promise((resolve) =>
-        setTimeout(resolve, 800)
-      );
-
-      console.log({
-        name,
-        email,
-        password,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const { name, email, password, confirmPassword } = form
   return (
     <AuthLayout>
       <AuthCard
@@ -62,29 +62,35 @@ export default function Register() {
           onSubmit={handleSubmit}
           className="space-y-4"
         >
+          {/* Error Message */}
+          {error && (
+            <ErrorMessage error={error} setError={clearError} />
+          )}
+
           <AuthInput
             id="name"
             label="Full name"
             type="text"
-            placeholder="John Doe"
+            name="name"
+            placeholder="Enter your name"
             autoComplete="name"
             value={name}
-            onChange={(event) =>
-              setName(event.target.value)
-            }
+            onChange={handelChange}
+            error={validationError.name}
             required
           />
 
           <AuthInput
             id="email"
             label="Email address"
+            name="email"
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
             value={email}
-            onChange={(event) =>
-              setEmail(event.target.value)
-            }
+            onChange={handelChange}
+            error={validationError.email}
+
             required
           />
 
@@ -93,9 +99,10 @@ export default function Register() {
             id="password"
             label="Password"
             value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
+            onChange={handelChange}
+            error={validationError.password}
+
+            required
           />
 
           <PasswordInput
@@ -103,12 +110,13 @@ export default function Register() {
             id="confirmPassword"
             label="Confirm password"
             value={confirmPassword}
-            onChange={(event) =>
-              setConfirmPassword(event.target.value)
-            }
+            onChange={handelChange}
+            error={validationError.confirmPassword}
+
+            required
           />
 
-          <p className="pt-1 text-xs leading-5 text-[#89958F]">
+          <p className="pt-1 text-xs leading-5 text-text-lite">
             By creating an account, you agree to our{" "}
             <Link
               to="/terms"
@@ -137,7 +145,7 @@ export default function Register() {
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-semibold text-[#1C9A6E] hover:text-[#153E30]"
+              className="font-semibold text-primary hover:text-primary-hover"
             >
               Sign in
             </Link>

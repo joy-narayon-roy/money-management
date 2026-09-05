@@ -10,7 +10,8 @@ interface PasswordInputProps {
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
-  error?: string;
+  error?: string | null;
+  required?: boolean
 }
 
 export function PasswordInput({
@@ -21,6 +22,7 @@ export function PasswordInput({
   placeholder = "••••••••",
   name = "",
   error,
+  required
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,12 +47,13 @@ export function PasswordInput({
             ? "border-red-400"
             : "border-[#DDE6E2]"
             }`}
+          required={required}
         />
 
         <button
           type="button"
           onClick={() => setShowPassword((value) => !value)}
-          className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center text-[#89958F] transition hover:text-[#153E30]"
+          className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center text-text-lite transition hover:text-main"
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (

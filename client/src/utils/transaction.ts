@@ -1,33 +1,45 @@
 import { format } from "date-fns";
-import type { CreateTransactionFormData } from "../types/transaction";
+import LZString from "lz-string";
+import type {
+  CreateTransactionFormData,
+  TransactionType,
+} from "../types/transaction";
 export const DRAFT_KEY = "draft_transaction";
 
-export function createNewTransaction(): CreateTransactionFormData {
+type CreateOption = {
+  type?: TransactionType;
+  date?: string;
+};
+export function createNewTransaction(
+  td?: CreateOption,
+): CreateTransactionFormData {
   return {
-    type: "INCOME",
-    date: format(new Date(), "yyyy-MM-dd"),
+    type: td?.type || "INCOME",
+    date: format(td?.date ? new Date(td.date) : new Date(), "yyyy-MM-dd"),
     amount: 0,
     description: "",
     party_id: "",
   };
 }
 
-export function loadDraft(
-  notEmpty: boolean = true,
-): CreateTransactionFormData[] {
-  // Support both the new and old key
-  const draftString =
-    localStorage.getItem(DRAFT_KEY) ?? localStorage.getItem("draf_transaction");
+type Option = {
+  notEmpty?: boolean;
+  formData?: CreateOption;
+};
+export function loadTransactionDraft(opt: Option): CreateTransactionFormData[] {
+  const { notEmpty = true, formData } = opt;
+  const draftString = localStorage.getItem(DRAFT_KEY);
 
   if (!draftString) {
     if (notEmpty) {
-      return [createNewTransaction()];
+      return [createNewTransaction(formData)];
     }
     return [];
   }
 
   try {
-    const draft = JSON.parse(draftString) as CreateTransactionFormData[];
+    const json_str = LZString.decompressFromBase64(draftString);
+    const draft = JSON.parse(json_str) as CreateTransactionFormData[];
 
     if (Array.isArray(draft) && draft.length > 0) {
       return draft;
@@ -37,7 +49,19 @@ export function loadDraft(
   }
 
   if (notEmpty) {
-    return [createNewTransaction()];
+    return [createNewTransaction(formData)];
   }
   return [];
+}
+
+export function saveTransactionDraft(form_datas: CreateTransactionFormData[]) {
+  const json_str = JSON.stringify(form_datas);
+  if (json_str === "[]") {
+    return;
+  }
+
+  const compresed_str = LZString.compressToBase64(json_str);
+
+  localStorage.setItem(DRAFT_KEY, compresed_str);
+  // console.log(compresed_str);
 }

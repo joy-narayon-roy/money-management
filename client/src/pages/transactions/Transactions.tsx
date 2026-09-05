@@ -1,5 +1,4 @@
-// pages/Transactions.tsx
-import { Link, useSearchParams } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { Plus } from "lucide-react";
 import {
     TransactionSummaryCards,
@@ -10,109 +9,39 @@ import {
 } from '../../components/transactionsPage'
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { useEffect, useState } from "react";
-import type { Transaction, TransactionType } from "../../types/transaction";
-import services from "../../services";
-import type { QueryOptions } from "../../services/transaction/getTransactions";
-
-
-interface State {
-    loading: boolean
-    error: string | null
-    transactions: Transaction[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        total_pages: number;
-    };
-}
+import useTransactions from "../../hooks/useTransactions";
+import { compressToBase64 } from "lz-string";
 
 function Transactions() {
     const { summary } = useSelector((s: RootState) => s.summary)
     const { token = "" } = useSelector((s: RootState) => s.auth)
-    const [sp, setSp] = useSearchParams({
-        tab: "ALL",
-        limit: `10`,
-        page: `1`
-    })
+    const { transactions, pagination, loading, error, goToPage } = useTransactions(token || "");
 
-    const [state, setState] = useState<State>({
-        loading: true,
-        error: null,
-        transactions: [],
-        pagination: {
-            page: 1,
-            limit: 10,
-            total: 0,
-            total_pages: 0
-        }
-    })
-    const current_tab = (sp.get("tab") as TransactionType | null) || "ALL";
-    const page = Number(sp.get("page")) || 1
-    const limit = Number(sp.get("limit")) || 10
+    const openPreview = () => {
+        const json_str = JSON.stringify(transactions)
+        const data_str = compressToBase64(json_str)
 
-
-
-
-    useEffect(() => {
-        const queryOpt: QueryOptions = {
-            type: current_tab,
-            limit,
-            page,
-        }
-        services.transaction.getTransactions(token, queryOpt)
-            .then(res => {
-                setState(pre => {
-                    return {
-                        ...pre,
-                        loading: false,
-                        error: null,
-                        ...res
-                    }
-                })
-            })
-            .catch(err => {
-                setState(pre => {
-                    return {
-                        ...pre,
-                        loading: false,
-                        error: `${err?.message || "failed to get transactions"}`
-                    }
-                })
-            })
-    }, [token, current_tab, limit, page])
-
-    const goToPage = (page: number) => {
-        setSp(pre => {
-            pre.set("page", `${page}`)
-            return pre
+        const sp = new URLSearchParams({
+            type: "create_transaction_list",
+            data: data_str,
         })
+
+        window.open(`/preview?${sp.toString()}`, "_blank")
     }
-
-    const { transactions = [], pagination } = state
     return (
-        <main className="min-h-full bg-[#F8FAFC]">
-            <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
+        <main className="min-h-full bg-background">
+            <div className="mx-auto max-w-[1600px] px-6 py-4 lg:px-8">
                 {/* Header */}
-                <section className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <section className="mb-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p className="mb-2 text-sm font-medium text-[#10B981]">
-                            Financial activity
-                        </p>
-
-                        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-[#1E293B]">
+                        <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-primary-dark">
                             Transactions
                         </h1>
-
-                        <p className="mt-1.5 text-sm text-[#64748B]">
-                            Keep track of your income, expenses, receivables and payables.
-                        </p>
                     </div>
 
                     <Link
                         to="/transactions/new"
-                        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#10B981] px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(16,185,129,0.18)] transition-all hover:bg-[#059669] hover:shadow-[0_6px_18px_rgba(16,185,129,0.22)]"
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(16,185,129,0.18)] transition-all hover:bg-primary-dark hover:shadow-[0_6px_18px_rgba(16,185,129,0.22)]"
                     >
                         <Plus className="h-4.5 w-4.5" strokeWidth={2.2} />
                         New transaction
@@ -120,7 +49,7 @@ function Transactions() {
                 </section>
 
                 {/* Summary */}
-                <section className="mb-8">
+                <section className="mb-2">
                     <TransactionSummaryCards summary={summary} />
                 </section>
 
@@ -135,10 +64,20 @@ function Transactions() {
                     </div>
 
                     <div className="mt-2">
-                        <TransactionTable transactions={transactions} />
+                        {error ? (
+                            <p className="px-6 py-8 text-sm text-red-500">{error}</p>
+                        ) : (
+                            <TransactionTable
+                                transactions={transactions}
+                                loading={loading}
+                            />
+                        )}
                     </div>
 
-                    <TransactionPagination pagination={pagination} goToPage={goToPage} />
+                    <TransactionPagination
+                        pagination={pagination}
+                        openPreview={openPreview}
+                        goToPage={goToPage} />
                 </section>
             </div>
         </main>
