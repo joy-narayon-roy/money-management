@@ -1,18 +1,11 @@
 import { Link } from "react-router-dom";
-import type { Party } from "../../types/party";
+import type { Party, PartyRoleType } from "../../types/party";
 import PartyRole from "./PartyRole";
 
 interface Props {
   party: Party;
 }
 
-const formatAmount = (amount: number) => {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(Math.abs(amount));
-};
 
 const PartyTableRow = ({
   party,
@@ -52,30 +45,34 @@ const PartyTableRow = ({
       </td>
 
       {/* Total */}
-      <td className="px-6 py-4.5 text-right text-sm font-semibold text-[#475569]">
-        {formatAmount(party.total)}
+      <td className="px-6 py-4.5 text-center text-sm font-semibold text-[#475569]">
+        ৳ {party.total}
       </td>
 
       {/* Paid */}
       <td className="px-6 py-4.5 text-right text-sm font-medium text-[#64748B]">
-        {formatAmount(party.paid)}
+        {showLiabilityInfo(party.role) && <>৳{party.paid}</>}
       </td>
 
       {/* Due */}
       <td className="px-6 py-4.5 text-right text-sm font-semibold">
-        <span
+        {showLiabilityInfo(party.role) && <span
           className={
             party.due > 0
               ? "text-[#D97706]"
               : "text-[#64748B]"
           }
         >
-          {formatAmount(party.due)}
+          ৳ {party.due}
         </span>
-      </td>
+        }      </td>
 
     </tr>
   );
 };
 
 export default PartyTableRow;
+
+function showLiabilityInfo(rol: PartyRoleType): boolean {
+  return (rol === "AP" || rol === "AR")
+}

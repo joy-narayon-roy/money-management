@@ -11,6 +11,7 @@ import type {
 
 import { format } from "date-fns";
 import { decompressFromBase64 } from "lz-string";
+import get_transaction_type_color, { get_transaction_type_sign } from "../../utils/get_transaction_type_color";
 
 type TableData = {
   date: string;
@@ -42,7 +43,7 @@ function PreviewTable({ tableData, total = 0 }: ReducerType) {
 
   return (
     <div className="max-w-3xl mx-auto mt-8 overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-      <table className="w-full min-w-[600px] text-left text-sm text-gray-700">
+      <table className="w-full min-w-150 text-left text-sm text-gray-700">
         <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
           <tr>
             <th className="w-40 px-6 py-4 font-semibold">
@@ -96,23 +97,20 @@ function PreviewTable({ tableData, total = 0 }: ReducerType) {
                 {/* Title */}
                 <td
                   className={
-                    "px-6 py-4 font-medium " +
-                    (tdi.type === "INCOME"
-                      ? "text-green-600"
-                      : "text-red-600")
-                  }
+                    "px-6 py-4 font-medium " + get_transaction_type_color(tdi.type)}
                 >
-                  {tdi.title}
+                  {tdi.title} {" "}
+                  {tdi.type === "AP" && <>(AP)</>}
+                  {tdi.type === "AP_PAYMENT" && <del>(AP)</del>}
+                  {tdi.type === "AR" && <>(AR)</>}
+                  {tdi.type === "AR_PAYMENT" && <del>(AR)</del>}
                 </td>
 
                 {/* Amount */}
                 <td
-                  className={`whitespace-nowrap px-6 py-4 text-right font-medium ${tdi.type === "INCOME"
-                    ? "text-green-600"
-                    : "text-red-600"
-                    }`}
+                  className={`whitespace-nowrap px-6 py-4 text-right font-medium ${get_transaction_type_color(tdi.type)}`}
                 >
-                  {tdi.type === "INCOME" ? "+" : "-"}
+                  {get_transaction_type_sign(tdi.type)}
                   {tdi.amount}
                 </td>
 
@@ -168,7 +166,7 @@ export default function Preview() {
     };
 
     table_data = data.reduce<ReducerType>((pre, curr) => {
-      if (curr.type === "INCOME" || curr.type ==="AR_PAYMENT" ||curr.type==="AP") {
+      if (curr.type === "INCOME" || curr.type === "AR_PAYMENT" || curr.type === "AP") {
         pre.total += Number(curr.amount);
       } else if (curr.type === "EXPENSE" || curr.type === "AR" || curr.type === "AP_PAYMENT") {
         pre.total -= Number(curr.amount);

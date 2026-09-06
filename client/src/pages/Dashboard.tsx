@@ -65,15 +65,15 @@ export default function Dashboard() {
           <StatCard
             title="Total income"
             icon={ArrowDownLeft}
-            value={`৳${summary.total_income}`}
+            value={`৳${summary.total_income.toFixed(2)}`}
             positive={summary.changes.income_sign === "+"}
-            change={summary.changes.income}
+            change={Number(summary.changes?.income?.toFixed(2) || 0)}
           />
 
           <StatCard
             title="Total expenses"
             value={`৳${summary.total_expense}`}
-            change={summary.changes.expense}
+            change={Number(summary.changes?.expense?.toFixed(2) || 0)}
             positive={summary.changes.expense_sign === "+"}
             icon={summary.changes.expense_sign === "+" ? ArrowUpRight : ArrowDownLeft}
             iconClassName="bg-[#F4F1ED] text-red-400"

@@ -74,7 +74,14 @@ export default function BulkFormRow(props: Props) {
             value: "",
         },
         ...parties
-            .filter((party) => party.role === type)
+            .filter((party) => {
+                if (type === "AP_PAYMENT" && party.role === "AP") {
+                    return true
+                } else if (type === "AR_PAYMENT" && party.role === "AR") {
+                    return true
+                }
+                return party.role === type
+            })
             .map((party) => ({
                 label: party.name,
                 value: party.id,

@@ -40,13 +40,6 @@ const typeConfig: Record<
   },
 };
 
-const formatAmount = (amount: number) => {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(Math.abs(amount));
-};
 
 const formatDate = (date_str: string) => {
   const d = new Date(date_str);
@@ -86,9 +79,9 @@ const TransactionTable = (props: Props) => {
               Party
             </th>
 
-            <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+            {/* <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Category
-            </th>
+            </th> */}
 
             <th className="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Amount
@@ -102,7 +95,7 @@ const TransactionTable = (props: Props) => {
           {loading && <LoadingRow />}
           {transactions.map((transaction) => {
             const config = typeConfig[transaction.type];
-            const positive = transaction.amount > 0;
+            const positive = (transaction.type === "INCOME" || transaction.type === "AR_PAYMENT" || transaction.type === "AP");
 
             return (
               <tr
@@ -145,16 +138,16 @@ const TransactionTable = (props: Props) => {
                   )} */}
                 </td>
 
-                <td className="px-6 py-4.5 text-sm text-text-secondary">
+                {/* <td className="px-6 py-4.5 text-sm text-text-secondary">
                   {transaction.type ?? "—"}
-                </td>
+                </td> */}
 
                 <td
                   className={`px-6 py-4.5 text-right text-sm font-semibold ${positive ? "text-[#16A34A]" : "text-[#DC2626]"
                     }`}
                 >
                   {positive ? "+" : "-"}
-                  {formatAmount(transaction.amount)}
+                  ৳ {transaction.amount}
                 </td>
 
                 <td className="px-4 py-4.5">
@@ -191,7 +184,7 @@ function LoadingRow() {
 
   return (
     <tr>
-      <td className="text-center py-3.5 text-text-lite text-sm" style={{cursor:"progress"}} colSpan={6}>
+      <td className="text-center py-3.5 text-text-lite text-sm" style={{ cursor: "progress" }} colSpan={6}>
         Loading{".".repeat(count)}
         <span className="invisible">{".".repeat(3 - count)}</span>
       </td>
