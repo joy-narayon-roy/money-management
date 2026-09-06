@@ -29,16 +29,15 @@ function RequireGuest({ children }: { children: ReactElement }) {
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const token = useSelector((state: RootState) => state.auth.token);
+  const { token, isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (token) dispatch(loadUserByToken(token));
   }, [dispatch, token]);
 
-  console.log(import.meta.env.VITE_API_BASE_URL)
   return (
     <Routes>
-      <Route index element={<Landing />} />
+      <Route index element={isLoggedIn ? <Navigate to={"/dashboard"} /> : <Landing />} />
 
       <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
       <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />

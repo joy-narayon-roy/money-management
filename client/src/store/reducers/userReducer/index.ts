@@ -1,9 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { User } from "../../../types/user";
-import { addTransaction } from "../transactionReducer";
+import { addBulkTransactions, addTransaction } from "../transactionReducer";
 import { loadTransaction } from "../transactionReducer/reducers";
 import { loadSummary } from "../userSummaryReducer";
-import { addPartyReducer } from "./reducers";
+import {
+  addPartyReducer,
+  updateBalanceOnBulkTransactionsCreated,
+  updateBalanceTransactionCreated,
+} from "./reducers";
 import api from "../../../api";
 
 export interface UserState {
@@ -53,18 +57,12 @@ const userSclice = createSlice({
       state.error = action?.error?.message || "failed to fetch user";
     });
 
-    builder.addCase(addTransaction, (state, action) => {
-      if (!state.user) {
-        return;
-      }
-      if (action.payload.transaction.type === "INCOME") {
-        state.user.balance =
-          (state.user.balance || 0) + action.payload.transaction.amount;
-      } else if (action.payload.transaction.type === "EXPENSE") {
-        state.user.balance =
-          (state.user.balance || 0) - action.payload.transaction.amount;
-      }
-    });
+    builder.addCase(addTransaction, updateBalanceTransactionCreated);
+
+    builder.addCase(
+      addBulkTransactions,
+      updateBalanceOnBulkTransactionsCreated,
+    );
   },
 });
 

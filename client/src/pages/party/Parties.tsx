@@ -67,9 +67,6 @@ function Parties() {
         });
     };
 
-
-    console.log(parties)
-
     return (
         <main className="min-h-full bg-background">
             <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">

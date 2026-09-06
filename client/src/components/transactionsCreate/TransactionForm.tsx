@@ -59,7 +59,7 @@ export default function TransactionForm({
         <SelectInput
           onChange={(e) => onChange("party_id", e.target.value)}
           required
-          options={parties}
+          options={[{ label: "Select", value: "" }, ...parties]}
           value={party_id}
         />
       </TransactionField>

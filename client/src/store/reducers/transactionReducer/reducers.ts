@@ -25,6 +25,31 @@ export const addTransactionReducer: CaseReducer<
   state.total += 1;
   state.transactions = Object.values(prevState);
 };
+export const addBulkTransactionsReducer: CaseReducer<
+  TransactionState,
+  PayloadAction<{ transactions: Transaction[] }>
+> = (state, action) => {
+  state.error = null;
+  state.loading = false;
+  const prevState = state.transactions.reduce<Record<string, Transaction>>(
+    (pre, curr) => {
+      pre[curr.id] = curr;
+      return pre;
+    },
+    {},
+  );
+  const { transactions = [] } = action.payload;
+
+  if (transactions.length === 0) {
+    return;
+  }
+  for (let i = 0; i < transactions.length; i++) {
+    const element = transactions[i];
+    prevState[element.id] = element;
+    state.total += 1;
+  }
+  state.transactions = Object.values(prevState);
+};
 
 export interface LoadTransactionOption {
   token: string;

@@ -21,15 +21,11 @@ import PageHeading from "../../components/global/PageHeadeing";
 import api from "../../api";
 
 export default function CreateTransaction() {
-  // const [sp] = useSearchParams({
-  //   draft: "0"
-  // })
-  // const isDraft = sp.get("draft") === "1"
   const userState = useSelector((s: RootState) => s.user)
   const token = useSelector((s: RootState) => s.auth.token)
   const dispatch = useDispatch()
   const nav = useNavigate()
-  // const draftTransactions = loadDraft(false)
+
   const [form, setForm] = useState<CreateTransactionFormData>(createNewTransaction());
   const [validationError, setValidationError] = useState<TransactionError>({})
 
@@ -81,8 +77,8 @@ export default function CreateTransaction() {
     if (token) {
 
       api.createTransaction(token, payload)
-        .then(transaction => {
-          dispatch(addTransaction({ transaction }))
+      .then(created_transaction => {
+          dispatch(addTransaction({ transaction: created_transaction }))
           nav("/transactions")
         })
         .catch(err => {

@@ -3,8 +3,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { TransactionBulkForm } from "../../components/transactionBulkCreate";
 import type { BulkTransactionResponse, CreateTransactionFormData, TransactionError, TransactionType } from "../../types/transaction";
 import { createNewTransaction, DRAFT_KEY, loadTransactionDraft, saveTransactionDraft } from "../../utils/transaction";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonCancel from "../../components/ButtonCancel";
 import PageHeading from "../../components/global/PageHeadeing";
@@ -13,12 +13,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import data from "../../data";
 import snake_to_titlecase from "../../utils/snake_to_titlecase";
 import TransactionTemplateModal from "../../modal/TransactionTemplateModal";
+import { addBulkTransactions } from "../../store/reducers/transactionReducer";
 
 
 
 export default function CreateBulkTransaction() {
     const { token } = useSelector((s: RootState) => s.auth)
     const parties = useSelector((s: RootState) => s.user.user?.parties) || []
+    const dispatch = useDispatch<AppDispatch>()
 
     const [sp] = useSearchParams({})
     const transaction_type_sp = (sp.get("type") || "").toUpperCase()
@@ -189,6 +191,7 @@ export default function CreateBulkTransaction() {
                     val_errors: []
                 })
 
+                dispatch(addBulkTransactions({ transactions: data.transactions }))
 
                 if (new_state.length === 0 || new_val_err.length === 0) {
                     deleteDraft()

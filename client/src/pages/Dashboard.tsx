@@ -38,7 +38,6 @@ export default function Dashboard() {
 
 
   const { summary } = summaryState
-  console.log(summary)
 
   return (
     <AppLayout>
