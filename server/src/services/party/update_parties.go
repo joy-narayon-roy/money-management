@@ -28,6 +28,11 @@ func (PartyService) UpdateParties(id uuid.UUID, uid uuid.UUID, info dto.UpdatePa
 		need_to_save = true
 	}
 
+	if info.Description != nil && *info.Description != "" && *info.Description != party.Description {
+		party.Description = *info.Description
+		need_to_save = true
+	}
+
 	if info.IsActive != nil && party.IsActive != *info.IsActive {
 
 		party.IsActive = *info.IsActive

@@ -71,10 +71,10 @@ const TransactionSummaryCards = (props: Props) => {
     const [key, value] = curr
     if (key === "total_income") {
       value.amount = `৳ ${summary.total_income}`
-      value.change = `${summary.changes.income_sign} ${summary.changes.income}`
+      value.change = `${summary.changes.income_sign} ${(summary.changes.income || 0).toFixed(2)}`
     } else if (key === "total_expense") {
       value.amount = `৳ ${summary.total_expense}`
-      value.change = `${summary.changes.expense_sign} ${summary.changes.expense}`
+      value.change = `${summary.changes.expense_sign} ${(summary.changes.expense || 0).toFixed(2)}`
     } else if (key === "total_recivable") {
       value.amount = `৳ ${summary.total_recivable}`
     }

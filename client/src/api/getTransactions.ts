@@ -5,7 +5,8 @@ export interface QueryOptions {
   limit?: number;
   page?: number;
   type?: "ALL" | TransactionType;
-  party: string;
+  party?: string[];
+  sort?: string;
 }
 
 export interface TransactionsResult {
@@ -31,6 +32,16 @@ export default async function getTransactions(
 
   if (opt.type && opt.type !== "ALL") {
     sp.set("type", opt.type);
+  }
+
+  if (opt.party && opt.party.length > 0) {
+    opt.party.forEach((p) => {
+      sp.append("party", p);
+    });
+  }
+
+  if (opt.sort && opt.sort !== "") {
+    sp.set("sort", opt.sort);
   }
 
   const { data } = await api.get<TransactionsResult>(

@@ -15,6 +15,7 @@ import Logout from "./pages/auth/Logout";
 import Preview from "./pages/preview/Preview";
 import Transactions from "./pages/transactions/Transactions";
 import PartyDetails from "./pages/party/PartyDetails";
+import TransactionDetails from "./pages/transactions/TransactionDetails";
 
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -57,6 +58,7 @@ export default function App() {
           <Route index element={<Transactions />} />
           <Route path="new" element={<CreateTransaction />} />
           <Route path="new/bulk" element={<CreateBulkTransaction />} />
+          <Route path=":id" element={<TransactionDetails />} />
         </Route>
 
         <Route path="parties">

@@ -14,6 +14,7 @@ import type { Transaction } from "../../types/transaction";
 import type { RootState } from "../../store";
 import api from "../../api";
 import type { PaginationType } from "../../types/pagination";
+import { Loading } from "../../components/Loading";
 
 
 
@@ -51,12 +52,11 @@ function PartyDetails() {
         }
 
         Promise.all([
-            // TODO: Fatch party and transaction
             api.party.getPartyById(token, id),
             api.getTransactions(token, {
                 limit: 20,
                 page: 1,
-                party: id,
+                party: [id],
             })
         ])
             .then(([partyResponse, transactionResponse]) => {
@@ -68,11 +68,10 @@ function PartyDetails() {
                     transactionPagination: transactionResponse.pagination
                 });
             })
-            .catch((error) => {
+            .catch(() => {
                 setState((pre) => ({
                     loading: false,
                     error:
-                        error?.response?.data?.message ||
                         "Failed to load party details.",
                     party: null,
                     transactions: [],
@@ -84,44 +83,28 @@ function PartyDetails() {
 
     if (state.loading) {
         return (
-            <main className="min-h-full bg-[#F8FAFC]">
-                <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
-                    <div className="animate-pulse">
-                        <div className="h-5 w-24 rounded bg-slate-200" />
-
-                        <div className="mt-8 h-24 w-72 rounded bg-slate-200" />
-
-                        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                            <div className="h-32 rounded-2xl bg-slate-200" />
-                            <div className="h-32 rounded-2xl bg-slate-200" />
-                            <div className="h-32 rounded-2xl bg-slate-200" />
-                        </div>
-
-                        <div className="mt-6 h-80 rounded-2xl bg-slate-200" />
-                    </div>
-                </div>
-            </main>
+            <Loading />
         );
     }
 
     if (state.error || !state.party) {
         return (
-            <main className="min-h-full bg-[#F8FAFC]">
+            <main className="min-h-full bg-background">
                 <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
                     <Link
                         to="/parties"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-[#64748B] transition hover:text-[#10B981]"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-text-secondary transition hover:text-primary"
                     >
                         <ArrowLeft size={16} />
                         Back to parties
                     </Link>
 
                     <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
-                        <h2 className="text-lg font-semibold text-[#1E293B]">
+                        <h2 className="text-lg font-semibold text-text-primary">
                             Party not found
                         </h2>
 
-                        <p className="mt-2 text-sm text-[#64748B]">
+                        <p className="mt-2 text-sm text-text-text-secondary">
                             {state.error ||
                                 "The party you are looking for does not exist."}
                         </p>
@@ -144,6 +127,7 @@ function PartyDetails() {
                     <PartyInfo party={state.party} />
 
                     <PartyTransactions
+                        party_id={id}
                         transactions={state.transactions}
                     />
                 </div>

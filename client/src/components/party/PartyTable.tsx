@@ -1,5 +1,6 @@
 import {
   ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 
@@ -9,28 +10,44 @@ import type { Party } from "../../types/party";
 interface Props {
   parties?: Party[];
   loading?: boolean;
+  sort?: string,
+  updateSort?: (key: string, type: "" | "-") => void
 }
+
+type sortInfoType = { [x: string]: "" | "-" }
 
 const PartyTable = ({
   parties = [],
   loading = false,
+  sort = "",
+  updateSort = () => { }
 }: Props) => {
+  const sortInfo: sortInfoType = sort.split(",").reduce<sortInfoType>((p, s) => {
+    p[s.replace("-", "")] = s[0] === "-" ? "-" : ""
+    return p
+  }, {})
+  
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px]">
+      <table className="w-full min-w-60">
 
         <thead>
-          <tr className="border-b border-[#E2E8F0]">
+          <tr className="border-b border-border">
 
             {/* Party */}
             <th className="px-6 py-3.5 text-left">
               <button
                 type="button"
                 className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("name", sortInfo["name"] === "" ? "-" : "")}
               >
-                Party
-
-                <ChevronDown size={14} />
+                Name
+                {
+                  sortInfo["name"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
               </button>
             </th>
 
@@ -39,10 +56,32 @@ const PartyTable = ({
               <button
                 type="button"
                 className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("role", sortInfo["role"] === "" ? "-" : "")}
               >
                 Role
+                {
+                  sortInfo["role"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
+              </button>
+            </th>
 
-                <ChevronDown size={14} />
+            {/* Total Transactions */}
+            <th className="px-6 py-3.5 text-left">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("total_transaction", sortInfo["total_transaction"] === "" ? "-" : "")}
+              >
+                Transactions
+                {
+                  sortInfo["total_transaction"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
               </button>
             </th>
 
@@ -51,10 +90,16 @@ const PartyTable = ({
               <button
                 type="button"
                 className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("total", sortInfo["total"] === "" ? "-" : "")}
+
               >
                 Total
-
-                <ChevronDown size={14} />
+                {
+                  sortInfo["total"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
               </button>
             </th>
 
@@ -63,10 +108,16 @@ const PartyTable = ({
               <button
                 type="button"
                 className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("paid", sortInfo["paid"] === "" ? "-" : "")}
               >
                 Paid
+                {
+                  sortInfo["paid"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
 
-                <ChevronDown size={14} />
               </button>
             </th>
 
@@ -75,10 +126,16 @@ const PartyTable = ({
               <button
                 type="button"
                 className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                onClick={() => updateSort("due", sortInfo["due"] === "" ? "-" : "")}
               >
                 Due
+                {
+                  sortInfo["due"] == "-" ?
+                    <ChevronDown size={14} />
+                    :
+                    <ChevronUp size={14} />
+                }
 
-                <ChevronDown size={14} />
               </button>
             </th>
 
@@ -91,13 +148,13 @@ const PartyTable = ({
               (_, index) => (
                 <tr
                   key={index}
-                  className="border-b border-[#E2E8F0]/70"
+                  className="border-b border-border/70"
                 >
                   <td
                     colSpan={5}
                     className="px-6 py-5"
                   >
-                    <div className="h-5 animate-pulse rounded-md bg-[#F1F5F9]" />
+                    <div className="h-5 animate-pulse rounded-md bg-background" />
                   </td>
                 </tr>
               )
@@ -108,7 +165,7 @@ const PartyTable = ({
                 colSpan={5}
                 className="px-6 py-16 text-center"
               >
-                <p className="text-sm font-medium text-[#1E293B]">
+                <p className="text-sm font-medium text-text-primary">
                   No parties found
                 </p>
 

@@ -1,4 +1,4 @@
-import { Link} from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import {
     TransactionSummaryCards,
@@ -15,6 +15,9 @@ import { compressToBase64 } from "lz-string";
 function Transactions() {
     const { summary } = useSelector((s: RootState) => s.summary)
     const { token = "" } = useSelector((s: RootState) => s.auth)
+    const [sp, setSp] = useSearchParams()
+    const sort = sp.get("sort") || ""
+
     const { transactions, pagination, loading, error, goToPage } = useTransactions(token || "");
 
     const openPreview = () => {
@@ -28,6 +31,14 @@ function Transactions() {
 
         window.open(`/preview?${sp.toString()}`, "_blank")
     }
+
+    const updateSort = (key: string, order: "" | "-") => {
+        setSp(p => {
+            p.set("sort", `${order}${key}`)
+            return p
+        })
+    }
+
     return (
         <main className="min-h-full bg-background">
             <div className="mx-auto max-w-[1600px] px-6 py-4 lg:px-8">
@@ -68,6 +79,8 @@ function Transactions() {
                             <p className="px-6 py-8 text-sm text-red-500">{error}</p>
                         ) : (
                             <TransactionTable
+                                sort={sort}
+                                updateSort={updateSort}
                                 transactions={transactions}
                                 loading={loading}
                             />

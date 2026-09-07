@@ -11,7 +11,7 @@ const PartyTableRow = ({
   party,
 }: Props) => {
   return (
-    <tr className="group border-b border-[#E2E8F0]/70 last:border-0 transition-colors hover:bg-[#F8FAFC]">
+    <tr className="group border-b border-border/70 last:border-0 transition-colors hover:bg-background">
 
       {/* Party */}
       <td className="px-6 py-4.5">
@@ -19,14 +19,14 @@ const PartyTableRow = ({
           to={`/parties/${party.id}`}
           className="flex items-center gap-3"
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ECFDF5] text-sm font-semibold text-[#059669]">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ECFDF5] text-sm font-semibold text-primary-dark">
             {party.name
               ?.charAt(0)
               .toUpperCase()}
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-[#1E293B] transition-colors group-hover:text-[#059669]">
+            <p className="text-sm font-semibold text-text-primary transition-colors group-hover:text-text-primary-dark">
               {party.name}
             </p>
 
@@ -44,13 +44,18 @@ const PartyTableRow = ({
         <PartyRole role={party.role} />
       </td>
 
+      {/* Total Transaction */}
+      <td className="px-6 py-4.5">
+        {party.total_transaction}
+      </td>
+
       {/* Total */}
-      <td className="px-6 py-4.5 text-center text-sm font-semibold text-[#475569]">
+      <td className="px-6 py-4.5 text-center text-sm font-semibold text-text-primary/80">
         ৳ {party.total}
       </td>
 
       {/* Paid */}
-      <td className="px-6 py-4.5 text-right text-sm font-medium text-[#64748B]">
+      <td className="px-6 py-4.5 text-right text-sm font-medium text-text-secondary">
         {showLiabilityInfo(party.role) && <>৳{party.paid}</>}
       </td>
 

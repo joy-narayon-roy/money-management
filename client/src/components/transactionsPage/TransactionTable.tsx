@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
+import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
 import { Link, } from "react-router-dom";
 import type { Transaction, TransactionType } from "../../types/transaction";
 import { useEffect, useState } from "react";
@@ -54,10 +54,25 @@ const formatDate = (date_str: string) => {
 type Props = {
   transactions?: Transaction[]
   loading?: boolean
+  sort?: string
+  updateSort?: (key: string, order: "" | "-") => void
 }
 
 const TransactionTable = (props: Props) => {
-  const { transactions = [], loading = false } = props
+  const {
+    transactions = [], loading = false, sort = "",
+    updateSort = () => { }
+  } = props
+  const sort_infos = sort.split(",").reduce<{ [k: string]: "" | "-" }>((p, c) => {
+    if (c[0] === "-") {
+      p[c.replace("-", "")] = "-"
+    } else {
+      p[c.replace("-", "")] = ""
+    }
+
+    return p
+  }, {})
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-212.5">
@@ -65,18 +80,52 @@ const TransactionTable = (props: Props) => {
           <tr className="border-b border-border">
             <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Date
+              <button className="p-1" onClick={() => updateSort("date", sort_infos["date"] === "-" ? "" : "-")}>
+
+                {
+                  sort_infos["date"] === "-" ?
+                    <ArrowUp size={12} /> :
+                    <ArrowDown size={12} />
+                }
+              </button>
             </th>
 
             <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Description
+              <button className="p-1" onClick={() => updateSort("description", sort_infos["date"] === "-" ? "" : "-")}>
+                {
+                  sort_infos["description"] === "-" ?
+                    <ArrowUp size={12} /> :
+                    <ArrowDown size={12} />
+                }
+              </button>
+
             </th>
 
             <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Type
+              <button className="p-1" onClick={() => updateSort("type", sort_infos["type"] === "-" ? "" : "-")}>
+
+                {
+                  sort_infos["type"] === "-" ?
+                    <ArrowUp size={12} /> :
+                    <ArrowDown size={12} />
+                }
+              </button>
+
             </th>
 
             <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Party
+              <button className="p-1" onClick={() => updateSort("party", sort_infos["party"] === "-" ? "" : "-")}>
+
+                {
+                  sort_infos["party"] === "-" ?
+                    <ArrowUp size={12} /> :
+                    <ArrowDown size={12} />
+                }
+              </button>
+
             </th>
 
             {/* <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
@@ -85,6 +134,15 @@ const TransactionTable = (props: Props) => {
 
             <th className="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
               Amount
+              <button className="p-1" onClick={() => updateSort("amount", sort_infos["amount"] === "-" ? "" : "-")}>
+
+                {
+                  sort_infos["amount"] === "-" ?
+                    <ArrowUp size={12} /> :
+                    <ArrowDown size={12} />
+                }
+              </button>
+
             </th>
 
             <th className="w-12 px-4" />

@@ -10,6 +10,7 @@ export interface Party extends BaseInterface {
   total: number;
   paid: number;
   due: number;
+  total_transaction:number
   description: string;
 }
 

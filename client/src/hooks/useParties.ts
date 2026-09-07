@@ -9,6 +9,7 @@ interface UsePartiesParams {
   status: string;
   page: number;
   limit: number;
+  sort: string;
 }
 
 interface PartiesResult {
@@ -20,7 +21,7 @@ interface PartiesResult {
 
 export function useParties(
   token: string,
-  { search, role, status, page, limit }: UsePartiesParams,
+  { search, role, status, page, limit, sort }: UsePartiesParams,
 ): PartiesResult {
   const [parties, setParties] = useState<Party[]>([]);
   const [pagination, setPagination] = useState<PaginationType>({
@@ -55,6 +56,10 @@ export function useParties(
           params.set("is_active", status);
         }
 
+        if (sort !== "" && sort.trim() !== "") {
+          params.set("sort", sort);
+        }
+
         const { data: result } = await api.party.getParties(
           token,
           params.toString(),
@@ -62,7 +67,7 @@ export function useParties(
 
         setLoading(false);
         setError(null);
-        setParties(result.parties||[]);
+        setParties(result.parties || []);
         setPagination((pre) => result.pagination || pre);
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") {
@@ -75,7 +80,7 @@ export function useParties(
     fetchParties();
 
     return () => {};
-  }, [search, role, status, page, limit, token]);
+  }, [search, role, status, page, limit, token, sort]);
 
   return {
     parties,

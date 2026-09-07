@@ -3,15 +3,24 @@ package transaction
 import (
 	"mm/config"
 	"mm/src/models"
+	"mm/src/utils"
 
 	"github.com/google/uuid"
 )
+
+var sortWhiteList = map[string]string{
+	"date":        "date",
+	"type":        "type",
+	"amount":      "amount",
+	"description": "description",
+}
 
 type TransactionQuery struct {
 	Limit uint                    `query:"limit"`
 	Page  uint                    `query:"page"`
 	Type  *models.TransactionType `query:"type"`
 	Party []string                `query:"party"`
+	Sort  string                  `query:"sort"`
 }
 
 type PaginationType struct {
@@ -64,8 +73,9 @@ func (TransactionService) GetTransactions(uid uuid.UUID, opt TransactionQuery) (
 	}
 
 	// Fetch paginated records
+	sort_string := utils.BuildSortOrderClause(opt.Sort, sortWhiteList, "date DESC")
 	if err := baseQuery.
-		Order("date DESC").
+		Order(sort_string).
 		Limit(int(opt.Limit)).
 		Offset(int(offset)).
 		Find(&result.Transactions).Error; err != nil {

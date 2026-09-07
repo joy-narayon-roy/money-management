@@ -2,6 +2,11 @@ package dto
 
 import "mm/src/models"
 
+type Party struct {
+	models.Party
+	TotalTrasnactions int64 `gorm:"column:total_transaction" json:"total_transaction"`
+}
+
 type PartyValidationError struct {
 	Name        *string `json:"name,omitempty"`
 	Role        *string `json:"role,omitempty"`
@@ -24,14 +29,14 @@ type CreatePartyRequest struct {
 	Description string           `json:"description"`
 }
 
-type UpdatePartyRequest struct {
-	Name        string  `json:"name"`
-	IsActive    *bool   `json:"is_active"`
-	Description *string `json:"description"`
-}
-
 type CreatePartyResponse struct {
 	Party           *models.Party         `json:"party"`
 	ValidationError *PartyValidationError `json:"validation_error"`
 	Error           error                 `json:"error"`
+}
+
+type UpdatePartyRequest struct {
+	Name        string  `json:"name"`
+	IsActive    *bool   `json:"is_active"`
+	Description *string `json:"description"`
 }

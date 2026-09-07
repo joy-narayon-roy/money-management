@@ -5,10 +5,11 @@ import PartyTransactionRow from "./PartyTransactionRow";
 import type { Transaction } from "../../types/transaction";
 
 interface Props {
+    party_id?: string
     transactions: Transaction[];
 }
 
-const PartyTransactions = ({ transactions }: Props) => {
+const PartyTransactions = ({ transactions, party_id = "" }: Props) => {
     return (
         <section className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
             <div className="flex items-center justify-between border-b border-[#E2E8F0] px-6 py-4">
@@ -23,13 +24,14 @@ const PartyTransactions = ({ transactions }: Props) => {
                 </div>
 
                 <Link
-                    to={`/transactions?party_id=${transactions.length > 0 ? transactions[0].id : ""}`}
+                    to={`/transactions?party_id=${party_id || ""}`}
                     className="hidden items-center gap-1.5 text-sm font-semibold text-[#059669] transition hover:text-[#047857] sm:inline-flex"
                 >
                     View all
                     <ArrowRight size={15} />
                 </Link>
             </div>
+
 
             {transactions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -49,7 +51,7 @@ const PartyTransactions = ({ transactions }: Props) => {
             ) : (
                 <>
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[700px]">
+                        <table className="w-full min-w-175">
                             <thead>
                                 <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#64748B]">

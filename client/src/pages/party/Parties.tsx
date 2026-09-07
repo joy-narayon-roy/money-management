@@ -34,18 +34,14 @@ function Parties() {
     const search = sp.get("search") || "";
     const role = sp.get("role") || "ALL";
     const status = sp.get("status") || "ALL";
-
+    const sort = sp.get("sort") || "";
 
     const { error, loading, pagination, parties = [] } = useParties(token || "", {
-        limit, page, role, status, search
+        limit, page, role, status, search, sort
     })
 
 
-
-    const updateParam = (
-        key: string,
-        value: string
-    ) => {
+    const updateParam = (key: string, value: string) => {
         setSp((prev) => {
             if (value) {
                 prev.set(key, value);
@@ -66,10 +62,17 @@ function Parties() {
             return prev;
         });
     };
+    
+    const updateSort = (key: string, order: "" | "-") => {
+        setSp(pre => {
+            pre.set("sort", `${order}${key}`)
+            return pre
+        })
+    }
 
     return (
         <main className="min-h-full bg-background">
-            <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
+            <div className="mx-auto max-w-[1600px] px-2 py-8 lg:px-8">
 
                 {/* Header */}
                 <PageHeading
@@ -99,6 +102,8 @@ function Parties() {
                     {/* Table */}
                     <div className="mt-3">
                         <PartyTable
+                            sort={sort}
+                            updateSort={updateSort}
                             parties={parties}
                             loading={loading}
                         />

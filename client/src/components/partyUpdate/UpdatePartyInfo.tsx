@@ -46,7 +46,7 @@ export default function UpdatePartyInfo(props: Props) {
         ev.preventDefault()
         setLoading(true)
         setVerr(pre => pre)
-        api.party.updatePartyRequest(state, props.token).then(({ data }) => {
+        api.party.updatePartyRequest(props.token, party.id, state).then(({ data }) => {
             dispatch(updatePary({ party: data }))
             nav("../")
         }).

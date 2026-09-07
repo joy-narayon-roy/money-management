@@ -41,6 +41,7 @@ export default function useTransactions(token: string) {
   const current_tab = (sp.get("tab") as TransactionType | null) || "ALL";
   const page = Number(sp.get("page")) || initialState.pagination.page;
   const limit = Number(sp.get("limit")) || initialState.pagination.limit;
+  const sort = sp.get("sort") || "";
 
   const [state, setState] = useState<State>(initialState);
 
@@ -57,6 +58,7 @@ export default function useTransactions(token: string) {
       type: current_tab,
       limit,
       page,
+      sort,
     };
 
     api
@@ -78,7 +80,7 @@ export default function useTransactions(token: string) {
           error: err?.message || "failed to get transactions",
         }));
       });
-  }, [queryKey, token, current_tab, limit, page]);
+  }, [queryKey, token, current_tab, limit, page, sort]);
 
   const goToPage = (nextPage: number) => {
     setSp((pre) => {

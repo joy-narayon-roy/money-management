@@ -1,12 +1,15 @@
 package party
 
-import "mm/src/models"
+import (
+	"mm/src/dto"
+)
 
 type GetPartiesOptions struct {
 	Limit    int       `query:"limit" json:"limit"`
 	Page     int       `query:"page" json:"page"`
 	Role     []*string `query:"role" json:"role"`
 	IsAcitve *bool     `query:"is_active"`
+	Sort     string    `query:"sort"`
 }
 
 type PaginationType struct {
@@ -27,6 +30,6 @@ func (p *PaginationType) calculateTotalPages() {
 }
 
 type GetPartiesResult struct {
-	Parties    []models.Party `json:"parties"`
+	Parties    []dto.Party    `json:"parties"`
 	Pagination PaginationType `json:"pagination"`
 }
