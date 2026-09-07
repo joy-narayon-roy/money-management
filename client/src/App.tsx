@@ -62,6 +62,7 @@ export default function App() {
         <Route path="parties">
           <Route index element={<Parties />} />
           <Route path=":id" element={<PartyDetails />} />
+          <Route path=":id/edit" element={<UpdateParty />} />
           <Route path="new" element={<CreateParty />} />
           <Route path="update/:id" element={<UpdateParty />} />
         </Route>

@@ -14,6 +14,21 @@ export const addPartyReducer: CaseReducer<
   }
 };
 
+export const updateParyReducer: CaseReducer<
+  UserState,
+  PayloadAction<{ party: Party }>
+> = (state, action) => {
+  if (state.user?.parties) {
+    state.user.parties = state.user.parties.map((p) => {
+      if (p.id !== action.payload.party.id) {
+        return p;
+      } else {
+        return action.payload.party;
+      }
+    });
+  }
+};
+
 export const updateBalanceTransactionCreated: CaseReducer<
   UserState,
   PayloadAction<{ transaction: Transaction }>

@@ -7,6 +7,7 @@ import {
   addPartyReducer,
   updateBalanceOnBulkTransactionsCreated,
   updateBalanceTransactionCreated,
+  updateParyReducer,
 } from "./reducers";
 import api from "../../../api";
 
@@ -41,6 +42,7 @@ const userSclice = createSlice({
   initialState,
   reducers: {
     addParty: addPartyReducer,
+    updatePary: updateParyReducer,
   },
   extraReducers: (builder) => {
     builder.addCase(loadUserByToken.pending, (state) => {
@@ -66,6 +68,6 @@ const userSclice = createSlice({
   },
 });
 
-export const { addParty } = userSclice.actions;
+export const { addParty, updatePary } = userSclice.actions;
 
 export default userSclice.reducer;
