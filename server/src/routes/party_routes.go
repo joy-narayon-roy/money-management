@@ -11,6 +11,7 @@ func usePartyRoutes(api fiber.Router) {
 	parties := api.Group("/party", middleware.JWTMiddleware)
 	parties.Get("/", controllers.Party.GetParties)
 	parties.Post("/", controllers.Party.CreateParty)
+	parties.Get("/:id", controllers.Party.GetPartyById)
 	parties.Patch("/:id", controllers.Party.UpdateParty)
 	parties.Delete("/:id", controllers.Party.DeleteParty)
 }

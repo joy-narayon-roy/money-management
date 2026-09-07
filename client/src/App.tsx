@@ -8,13 +8,13 @@ import AppLayout from "./components/layout/AppLayout";
 import Parties from "./pages/party/Parties";
 import CreateParty from "./pages/party/CreateParty";
 import UpdateParty from "./pages/party/UpdateParty";
-import Party from "./pages/party/Party";
 import { Dashboard, Landing, Login, Profile, Register, } from "./pages";
 import CreateTransaction from "./pages/transactions/CreateTransaction";
 import CreateBulkTransaction from "./pages/transactions/CreateBulkTransaction";
 import Logout from "./pages/auth/Logout";
 import Preview from "./pages/preview/Preview";
 import Transactions from "./pages/transactions/Transactions";
+import PartyDetails from "./pages/party/PartyDetails";
 
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -61,7 +61,7 @@ export default function App() {
 
         <Route path="parties">
           <Route index element={<Parties />} />
-          <Route path=":id" element={<Party />} />
+          <Route path=":id" element={<PartyDetails />} />
           <Route path="new" element={<CreateParty />} />
           <Route path="update/:id" element={<UpdateParty />} />
         </Route>

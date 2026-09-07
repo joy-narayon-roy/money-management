@@ -5,6 +5,7 @@ export interface QueryOptions {
   limit?: number;
   page?: number;
   type?: "ALL" | TransactionType;
+  party: string;
 }
 
 export interface TransactionsResult {

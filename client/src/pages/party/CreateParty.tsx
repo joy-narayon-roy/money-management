@@ -57,7 +57,7 @@ export default function CreateParty() {
 
                                 <div className="border-b border-gray-200 p-6">
                                     <h2 className="text-base font-semibold text-gray-900">
-                                        Part Details
+                                        Party Details
                                     </h2>
 
                                     <p className="mt-1 text-sm text-gray-500">

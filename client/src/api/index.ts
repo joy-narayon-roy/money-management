@@ -5,6 +5,7 @@ import createTransaction from "./createTransaction";
 import getTransactions from "./getTransactions";
 import { createPartyRequest } from "./party/createParty";
 import getParties from "./party/getParties";
+import getPartyById from "./party/getPartyById";
 import getSummary from "./summary/getSummary";
 
 export default {
@@ -16,6 +17,7 @@ export default {
   party: {
     getParties,
     createPartyRequest,
+    getPartyById,
   },
   getTransactions,
   createBulkTransaction,
