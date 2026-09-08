@@ -16,6 +16,7 @@ import Preview from "./pages/preview/Preview";
 import Transactions from "./pages/transactions/Transactions";
 import PartyDetails from "./pages/party/PartyDetails";
 import TransactionDetails from "./pages/transactions/TransactionDetails";
+import InstallPrompt from "./components/InstallPrompt";
 
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -37,52 +38,55 @@ export default function App() {
   }, [dispatch, token]);
 
   return (
-    <Routes>
-      <Route index element={isLoggedIn ? <Navigate to={"/dashboard"} /> : <Landing />} />
+    <>
+      <InstallPrompt />
+      <Routes>
+        <Route index element={isLoggedIn ? <Navigate to={"/dashboard"} /> : <Landing />} />
 
-      <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-      <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
 
-      <Route
-        path="/"
-        element={
-          <RequireAuth>
-            <AppLayout>
-              <Outlet />
-            </AppLayout>
-          </RequireAuth>
-        }
-      >
+        <Route
+          path="/"
+          element={
+            <RequireAuth>
+              <AppLayout>
+                <Outlet />
+              </AppLayout>
+            </RequireAuth>
+          }
+        >
 
-        <Route path="transactions">
-          <Route index element={<Transactions />} />
-          <Route path="new" element={<CreateTransaction />} />
-          <Route path="new/bulk" element={<CreateBulkTransaction />} />
-          <Route path=":id" element={<TransactionDetails />} />
+          <Route path="transactions">
+            <Route index element={<Transactions />} />
+            <Route path="new" element={<CreateTransaction />} />
+            <Route path="new/bulk" element={<CreateBulkTransaction />} />
+            <Route path=":id" element={<TransactionDetails />} />
+          </Route>
+
+          <Route path="parties">
+            <Route index element={<Parties />} />
+            <Route path=":id" element={<PartyDetails />} />
+            <Route path=":id/edit" element={<UpdateParty />} />
+            <Route path="new" element={<CreateParty />} />
+            <Route path="update/:id" element={<UpdateParty />} />
+          </Route>
+
+          <Route path="accounts" element={<></>} />
+          <Route path="receivables" element={<></>} />
+          <Route path="payables" element={<></>} />
+          <Route path="reports" element={<></>} />
+          <Route path="settings" element={<></>} />
+
         </Route>
 
-        <Route path="parties">
-          <Route index element={<Parties />} />
-          <Route path=":id" element={<PartyDetails />} />
-          <Route path=":id/edit" element={<UpdateParty />} />
-          <Route path="new" element={<CreateParty />} />
-          <Route path="update/:id" element={<UpdateParty />} />
-        </Route>
 
-        <Route path="accounts" element={<></>} />
-        <Route path="receivables" element={<></>} />
-        <Route path="payables" element={<></>} />
-        <Route path="reports" element={<></>} />
-        <Route path="settings" element={<></>} />
+        <Route path="/logout" element={<RequireAuth><Logout /></RequireAuth>} />
+        <Route path="/login" element={<RequireGuest><Login /></RequireGuest>} />
+        <Route path="/register" element={<RequireGuest><Register /></RequireGuest>} />
 
-      </Route>
-
-
-      <Route path="/logout" element={<RequireAuth><Logout /></RequireAuth>} />
-      <Route path="/login" element={<RequireGuest><Login /></RequireGuest>} />
-      <Route path="/register" element={<RequireGuest><Register /></RequireGuest>} />
-
-      <Route path="/preview" element={<Preview />} />
-    </Routes>
+        <Route path="/preview" element={<Preview />} />
+      </Routes>
+    </>
   );
 }
