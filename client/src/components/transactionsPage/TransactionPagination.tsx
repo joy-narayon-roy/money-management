@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 
 type Pagination = {
   total?: number;
@@ -62,39 +62,45 @@ const TransactionPagination = ({
         <span className="font-medium text-[#1E293B]">{total}</span>
       </p>
 
-      <div className="">
-        <button onClick={openPreview}>Open Previews</button>
-      </div>
-
-      <div className="flex items-center gap-1">
-        <button
-          disabled={currentPage <= 1}
-          onClick={() => goToPage(currentPage - 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] hover:bg-[#F8FAFC] disabled:opacity-40"
-        >
-          <ChevronLeft size={16} />
-        </button>
-
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => goToPage(page)}
-            className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${page === currentPage
-              ? "bg-[#D1FAE5] text-[#059669]"
-              : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]"
-              }`}
+      <div className="flex flex-row gap-3">
+        <div className="">
+          <button onClick={openPreview}
+            className="px-4 py-1 border rounded border-border text-text-primary"
           >
-            {page}
-          </button>
-        ))}
+            <Eye size={18} /></button>
+        </div>
 
-        <button
-          disabled={currentPage >= total_pages}
-          onClick={() => goToPage(currentPage + 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B] disabled:opacity-40"
-        >
-          <ChevronRight size={16} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            disabled={currentPage <= 1}
+            onClick={() => goToPage(currentPage - 1)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] hover:bg-[#F8FAFC] disabled:opacity-40"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${page === currentPage
+                ? "bg-[#D1FAE5] text-[#059669]"
+                : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]"
+                }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage >= total_pages}
+            onClick={() => goToPage(currentPage + 1)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B] disabled:opacity-40"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+
       </div>
     </div>
   );

@@ -3,18 +3,19 @@ package party
 import (
 	"fmt"
 	"mm/config"
-	"mm/src/models"
+	"mm/src/dto"
 
 	"github.com/google/uuid"
 )
 
-func (PartyService) GetPartyById(uid uuid.UUID, party_id uuid.UUID, opt GetPartiesOptions) (*models.Party, error) {
+func (PartyService) GetPartyById(uid uuid.UUID, party_id uuid.UUID, opt GetPartiesOptions) (*dto.Party, error) {
 
 	query := config.DB.Table("party").
 		Select(`
 			party.*,
 			COALESCE(t.total, 0) AS total,
 			COALESCE(t.paied, 0) AS paied,
+			COALESCE(t.total_transaction, 0) AS total_transaction,
 			CASE
 				WHEN party.role IN ('AP', 'AR')
 					THEN COALESCE(t.total, 0) - COALESCE(t.paied, 0)
@@ -26,14 +27,15 @@ func (PartyService) GetPartyById(uid uuid.UUID, party_id uuid.UUID, opt GetParti
 				SELECT
 					party_id,
 					SUM(CASE WHEN type IN ('INCOME','EXPENSE','AP','AR') THEN amount ELSE 0 END) AS total,
-					SUM(CASE WHEN type IN ('AR_PAYMENT','AP_PAYMENT') THEN amount ELSE 0 END) AS paied
+					SUM(CASE WHEN type IN ('AR_PAYMENT','AP_PAYMENT') THEN amount ELSE 0 END) AS paied,
+					COUNT(id) AS total_transaction
 				FROM transaction
 				GROUP BY party_id
 			) t ON t.party_id = party.id
 		`).
 		Where("user_id = ? and id = ?", uid, party_id)
 
-	var party models.Party
+	var party dto.Party
 	err := query.Order("party.id").First(&party).Error
 
 	if err != nil {

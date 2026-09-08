@@ -1,7 +1,8 @@
-import { FileText, UserRound } from "lucide-react";
+import { ArrowRight, FileText, UserRound } from "lucide-react";
 
 import PartyRole from "./PartyRole";
 import type { Party } from "../../types/party";
+import { Link } from "react-router-dom";
 
 interface Props {
     party: Party;
@@ -10,8 +11,8 @@ interface Props {
 const PartyInfo = ({ party }: Props) => {
     return (
         <section className="h-fit overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
-            <div className="border-b border-[#E2E8F0] px-5 py-4">
-                <h2 className="text-base font-semibold text-[#1E293B]">
+            <div className="border-b border-border px-5 py-4">
+                <h2 className="text-base font-semibold text-text-primary">
                     Party information
                 </h2>
             </div>
@@ -45,11 +46,10 @@ const PartyInfo = ({ party }: Props) => {
 
                     <div className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-[#334155]">
                         <span
-                            className={`h-2 w-2 rounded-full ${
-                                party.is_active
-                                    ? "bg-[#22C55E]"
-                                    : "bg-[#94A3B8]"
-                            }`}
+                            className={`h-2 w-2 rounded-full ${party.is_active
+                                ? "bg-income"
+                                : "bg-text-lite"
+                                }`}
                         />
 
                         {party.is_active ? "Active" : "Inactive"}
@@ -62,9 +62,17 @@ const PartyInfo = ({ party }: Props) => {
                         Notes
                     </div>
 
-                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#64748B]">
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-text-secondary">
                         {party.description?.trim() || "No description added."}
                     </p>
+
+                    <Link
+                        to={`/transactions?party=${party.id || ""}`}
+                        className="mt-5 hidden items-center gap-1.5 text-sm font-semibold text-primary transition hover:text-primary-hover sm:inline-flex"
+                    >
+                        View all
+                        <ArrowRight size={15} />
+                    </Link>
                 </div>
             </div>
         </section>
