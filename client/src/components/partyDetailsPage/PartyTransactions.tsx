@@ -12,7 +12,7 @@ interface Props {
 const PartyTransactions = ({ transactions, party_id = "" }: Props) => {
     return (
         <section className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-6 py-4">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
                     <h2 className="text-base font-semibold text-[#1E293B]">
                         Transactions
@@ -24,7 +24,7 @@ const PartyTransactions = ({ transactions, party_id = "" }: Props) => {
                 </div>
 
                 <Link
-                    to={`/transactions?party_id=${party_id || ""}`}
+                    to={`/transactions?party=${party_id || ""}`}
                     className="hidden items-center gap-1.5 text-sm font-semibold text-[#059669] transition hover:text-[#047857] sm:inline-flex"
                 >
                     View all
@@ -85,12 +85,12 @@ const PartyTransactions = ({ transactions, party_id = "" }: Props) => {
                         </table>
                     </div>
 
-                    <div className="border-t border-[#E2E8F0] px-6 py-4 sm:hidden">
+                    <div className="border-t border-border px-6 py-4 sm:hidden">
                         <Link
-                            to="/transactions"
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#059669]"
+                            to={`/transactions?party=${party_id || ""}`}
+                            className="hidden items-center gap-1.5 text-sm font-semibold text-[#059669] transition hover:text-[#047857] sm:inline-flex"
                         >
-                            View all transactions
+                            View all
                             <ArrowRight size={15} />
                         </Link>
                     </div>

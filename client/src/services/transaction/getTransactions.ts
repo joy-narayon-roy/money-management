@@ -6,6 +6,7 @@ export interface QueryOptions {
   page?: number;
   type?: "ALL" | TransactionType;
   sort?: string;
+  party?: string[];
 }
 
 export interface TransactionsResult {
