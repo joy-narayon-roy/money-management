@@ -11,13 +11,13 @@ interface Props {
     party: Party;
 }
 
-const formatMoney = (value: number) => {
-    return new Intl.NumberFormat("en-BD", {
-        style: "currency",
-        currency: "BDT",
-        maximumFractionDigits: 0,
-    }).format(value);
-};
+// const formatMoney = (value: number) => {
+//     return new Intl.NumberFormat("en-BD", {
+//         style: "currency",
+//         currency: "BDT",
+//         maximumFractionDigits: 0,
+//     }).format(value);
+// };
 
 
 const PartySummaryCards = ({ party }: Props) => {
@@ -66,7 +66,7 @@ const PartySummaryCards = ({ party }: Props) => {
                                 </p>
 
                                 <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
-                                    {formatMoney(card.value)}
+                                    {card.label==="Transaction"?"":"৳"} {card.value}
                                 </p>
                             </div>
 

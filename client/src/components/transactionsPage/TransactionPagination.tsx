@@ -52,14 +52,14 @@ const TransactionPagination = ({
   const end = Math.min(currentPage * limit, total);
 
   return (
-    <div className="flex items-center justify-between border-t border-[#E2E8F0] px-6 py-4">
-      <p className="text-xs text-[#64748B]">
+    <div className="flex items-center justify-between border-t border-border px-6 py-4">
+      <p className="text-xs text-text-secondary">
         Showing{" "}
-        <span className="font-medium text-[#1E293B]">
+        <span className="font-medium text-text-primary">
           {start}–{end}
         </span>{" "}
         of{" "}
-        <span className="font-medium text-[#1E293B]">{total}</span>
+        <span className="font-medium text-text-primary">{total}</span>
       </p>
 
       <div className="flex flex-row gap-3">
@@ -74,7 +74,7 @@ const TransactionPagination = ({
           <button
             disabled={currentPage <= 1}
             onClick={() => goToPage(currentPage - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] hover:bg-[#F8FAFC] disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] hover:bg-background disabled:opacity-40"
           >
             <ChevronLeft size={16} />
           </button>
@@ -84,8 +84,8 @@ const TransactionPagination = ({
               key={page}
               onClick={() => goToPage(page)}
               className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-medium transition-colors ${page === currentPage
-                ? "bg-[#D1FAE5] text-[#059669]"
-                : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]"
+                ? "bg-primary-light text-primary"
+                : "text-text-secondary hover:bg-background hover:text-text-primary"
                 }`}
             >
               {page}
@@ -95,7 +95,7 @@ const TransactionPagination = ({
           <button
             disabled={currentPage >= total_pages}
             onClick={() => goToPage(currentPage + 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B] disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary hover:bg-background hover:text-text-primary disabled:opacity-40"
           >
             <ChevronRight size={16} />
           </button>
