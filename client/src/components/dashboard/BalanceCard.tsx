@@ -25,7 +25,7 @@ export function BalanceCard({
   );
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-[#153E30] p-6 text-white shadow-[0_15px_35px_rgba(21,62,48,0.18)]">
+    <div className="relative overflow-hidden rounded-2xl bg-main p-6 text-white shadow-[0_15px_35px_rgba(21,62,48,0.18)]">
       {/* Decorative circles */}
       <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full border border-white/10" />
       <div className="pointer-events-none absolute -right-8 -top-12 h-40 w-40 rounded-full border border-white/10" />

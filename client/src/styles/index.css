@@ -22,9 +22,9 @@ a {
   --color-primary-hover: #197b5a;
   --color-primary-dark: #059669;
   --color-primary-light: #d1fae5;
-  
-  --color-main:#153e30;
-  --color-main-hover:#1b4b3a;
+
+  --color-main: #153e30;
+  --color-main-hover: #1b4b3a;
 
   --color-secondary: #0f172a;
 
@@ -33,7 +33,8 @@ a {
 
   --color-text-primary: #1e293b;
   --color-text-secondary: #64748b;
-  --color-text-lite:#89958F;
+  --color-text-lite: #89958f;
+  --color-text-disable: #94a3b8;
   /* --color-text- */
 
   --color-border: #e2e8f0;

@@ -6,10 +6,11 @@ import {
   type LucideProps,
 } from "lucide-react";
 import type { Summary } from "../../types/summary";
+import formatAmount from "../../utils/formatAmount";
 
 interface CardStyle {
   title: string,
-  amount: string,
+  amount: number,
   change: string,
   description: string,
   icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>,
@@ -20,7 +21,7 @@ interface CardStyle {
 const cardStyles: { [key: string]: CardStyle } = {
   total_income: {
     title: "Total income",
-    amount: "৳0",
+    amount: 0,
     change: "+0%",
     description: "vs. last month",
     icon: ArrowDownLeft,
@@ -30,7 +31,7 @@ const cardStyles: { [key: string]: CardStyle } = {
   },
   total_expense: {
     title: "Total expense",
-    amount: "৳0",
+    amount: 0,
     change: "+0%",
     description: "vs. last month",
     icon: ArrowUpRight,
@@ -40,7 +41,7 @@ const cardStyles: { [key: string]: CardStyle } = {
   },
   total_recivable: {
     title: "Receivable",
-    amount: "৳0",
+    amount: 0,
     change: "0 pending",
     description: "outstanding",
     icon: Clock3,
@@ -50,7 +51,7 @@ const cardStyles: { [key: string]: CardStyle } = {
   },
   payable: {
     title: "Payable",
-    amount: "৳0",
+    amount: 0,
     change: "0 pending",
     description: "outstanding",
     icon: CircleDollarSign,
@@ -70,13 +71,13 @@ const TransactionSummaryCards = (props: Props) => {
   const cards = Object.entries(cardStyles).reduce<CardStyle[]>((pre, curr) => {
     const [key, value] = curr
     if (key === "total_income") {
-      value.amount = `৳ ${summary.total_income}`
+      value.amount = summary.total_income
       value.change = `${summary.changes.income_sign} ${(summary.changes.income || 0).toFixed(2)}`
     } else if (key === "total_expense") {
-      value.amount = `৳ ${summary.total_expense}`
+      value.amount = summary.total_expense
       value.change = `${summary.changes.expense_sign} ${(summary.changes.expense || 0).toFixed(2)}`
     } else if (key === "total_recivable") {
-      value.amount = `৳ ${summary.total_recivable}`
+      value.amount = summary.total_recivable
     }
     pre.push({
       ...value,
@@ -100,7 +101,7 @@ const TransactionSummaryCards = (props: Props) => {
                 </p>
 
                 <p className="mt-3 text-[25px] font-semibold tracking-tight text-text-primary">
-                  {card.amount}
+                  {formatAmount(card.amount)}
                 </p>
               </div>
 
@@ -123,7 +124,7 @@ const TransactionSummaryCards = (props: Props) => {
                 {card.change}
               </span>
 
-              <span className="text-[#94A3B8]">
+              <span className="text-text-disable">
                 {card.description}
               </span>
             </div>

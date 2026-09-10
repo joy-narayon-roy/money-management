@@ -1,0 +1,23 @@
+@import "../../../styles/index.css";
+
+.table_container {
+  @apply overflow-x-auto;
+}
+
+.table {
+  @apply w-full min-w-[212.5px];
+}
+
+.table_head_tr {
+  @apply border-b border-border;
+}
+
+.table_head_tr_th {
+  @apply px-6 py-3.5 text-left font-semibold uppercase tracking-[0.08em] text-text-disable;
+
+  font-size: 0.75rem;
+}
+
+.table_body_tr_td {
+  @apply px-6 py-4.5;
+}

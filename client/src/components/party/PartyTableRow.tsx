@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Party, PartyRoleType } from "../../types/party";
 import PartyRole from "./PartyRole";
+import formatAmount from "../../utils/formatAmount";
 
 interface Props {
   party: Party;
@@ -31,7 +32,7 @@ const PartyTableRow = ({
             </p>
 
             {!party.is_active && (
-              <p className="mt-0.5 text-xs text-[#94A3B8]">
+              <p className="mt-0.5 text-xs text-text-disable">
                 Inactive
               </p>
             )}
@@ -51,12 +52,12 @@ const PartyTableRow = ({
 
       {/* Total */}
       <td className="px-6 py-4.5 text-center text-sm font-semibold text-text-primary/80">
-        ৳ {party.total}
+        {formatAmount(party.total)}
       </td>
 
       {/* Paid */}
       <td className="px-6 py-4.5 text-right text-sm font-medium text-text-secondary">
-        {showLiabilityInfo(party.role) && <>৳{party.paid}</>}
+        {showLiabilityInfo(party.role) && <>{formatAmount(party.paid)}</>}
       </td>
 
       {/* Due */}
@@ -64,14 +65,14 @@ const PartyTableRow = ({
         {showLiabilityInfo(party.role) && <span
           className={
             party.due > 0
-              ? "text-[#D97706]"
-              : "text-[#64748B]"
+              ? "text-warning"
+              : "text-text-secondary"
           }
         >
-          ৳ {party.due}
+          {formatAmount(party.due)}
         </span>
-        }      </td>
-
+        }
+      </td>
     </tr>
   );
 };

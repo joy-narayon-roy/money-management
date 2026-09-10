@@ -8,7 +8,6 @@ import { BalanceCard } from "../components/dashboard/BalanceCard";
 import { StatCard } from "../components/dashboard/StatCard";
 import { CashFlowChart } from "../components/dashboard/CashFlowChart";
 import { RecentTransactions } from "../components/dashboard/RecentTransactions";
-import { FinancialSummary } from "../components/dashboard/FinancialSummary";
 import { QuickActions } from "../components/dashboard/QuickActions";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
@@ -102,7 +101,8 @@ export default function Dashboard() {
         <div className="mt-5 grid gap-5 xl:grid-cols-[1.3fr_1fr]">
           <RecentTransactions />
 
-          <FinancialSummary />
+          {/* TODO: Update financial summary */}
+          {/* <FinancialSummary /> */}
         </div>
 
         {/* Monthly overview */}
@@ -130,7 +130,7 @@ export default function Dashboard() {
                 </p>
 
                 <p className="mt-1 text-lg font-bold text-primary">
-                  +৳23,500
+                  +৳0
                 </p>
               </div>
 
@@ -140,7 +140,7 @@ export default function Dashboard() {
                 </p>
 
                 <p className="mt-1 text-lg font-bold text-[#26362F]">
-                  55.9%
+                  0%
                 </p>
               </div>
             </div>

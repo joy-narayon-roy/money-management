@@ -8,55 +8,38 @@ import {
   YAxis,
 } from "recharts";
 import type { Monthly } from "../../types/summary";
-// import type { Monthly } from "../../models/summary";
-
-// const data = [
-//   {
-//     month: "Feb",
-//     income: 32000,
-//     expense: 18000,
-//   },
-//   {
-//     month: "Mar",
-//     income: 36000,
-//     expense: 21000,
-//   },
-//   {
-//     month: "Apr",
-//     income: 29000,
-//     expense: 17000,
-//   },
-//   {
-//     month: "May",
-//     income: 42000,
-//     expense: 24000,
-//   },
-//   {
-//     month: "Jun",
-//     income: 38000,
-//     expense: 19000,
-//   },
-//   {
-//     month: "Jul",
-//     income: 45000,
-//     expense: 23000,
-//   },
-//   {
-//     month: "Aug",
-//     income: 50000,
-//     expense: 18500,
-//   },
-// ];
+import type { Option } from "../../types/select_option";
 
 function formatCurrency(value: number) {
   return `৳${(value / 1000).toFixed(0)}k`;
 }
 
 
+
+
 type Props = {
   data: Monthly[]
+  selectOptions?: Option[]
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement, HTMLSelectElement>) => void
 }
-export function CashFlowChart({ data = [] }: Props) {
+export function CashFlowChart({
+  data = [],
+  onChange = () => { },
+  selectOptions = [{
+    label: "Last 12 months",
+    value: "LAST_12"
+  }, {
+    label: "Last 7 months",
+    value: "LAST_7"
+  }],
+}: Props) {
+
+  const options: Option[] = [{
+    label: "This year",
+    value: "THIS_YEAR"
+  },
+  ...selectOptions
+  ]
 
   return (
     <div className="rounded-2xl border border-[#E3EBE7] bg-white p-5 sm:p-6">
@@ -71,10 +54,8 @@ export function CashFlowChart({ data = [] }: Props) {
           </p>
         </div>
 
-        <select className="h-9 rounded-lg border border-[#E1E9E5] bg-white px-3 text-xs text-[#63716C] outline-none focus:border-[#1C9A6E]">
-          <option >Last 12 months</option>
-          <option>Last 7 months</option>
-          <option>This year</option>
+        <select onChange={onChange} className="h-9 rounded-lg border border-[#E1E9E5] bg-white px-3 text-xs text-[#63716C] outline-none focus:border-[#1C9A6E]">
+          {options.map((opt, i) => <option key={i} value={opt.value} >{opt.label}</option>)}
         </select>
       </div>
 

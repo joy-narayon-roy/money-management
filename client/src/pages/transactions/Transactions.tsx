@@ -41,7 +41,7 @@ function Transactions() {
 
     return (
         <main className="min-h-full bg-background">
-            <div className="mx-auto max-w-[1600px] px-6 py-4 lg:px-8">
+            <div className="mx-auto max-w-[1600px] px-1 py-4 lg:px-8">
                 {/* Header */}
                 <section className="mb-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>

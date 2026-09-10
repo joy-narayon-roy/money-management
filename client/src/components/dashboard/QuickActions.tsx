@@ -26,11 +26,11 @@ const actions = [
     href: "/transactions/new?type=expense",
     icon: ArrowUpRight,
     className:
-      "bg-[#F4F1ED] text-[#806D5B] hover:bg-[#EEE9E3]",
+    "bg-[#F4F1ED] text-[#806D5B] hover:bg-[#EEE9E3]",
   },
   {
     label: "Record payment",
-    href: "/payments/new",
+    href: "/transactions/new?type=AR_PAYMENT",
     icon: Receipt,
     className:
       "bg-[#EAF0F6] text-[#547493] hover:bg-[#E1E9F1]",
@@ -45,7 +45,7 @@ export function QuickActions() {
           Quick actions
         </h3>
 
-        <p className="mt-1 text-xs text-[#89958F]">
+        <p className="mt-1 text-xs text-text-lite">
           Common tasks
         </p>
       </div>

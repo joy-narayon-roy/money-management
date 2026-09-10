@@ -3,6 +3,11 @@ import { Link, } from "react-router-dom";
 import type { Transaction, TransactionType } from "../../types/transaction";
 import { useEffect, useState } from "react";
 
+import style from './styles/transactionTable.module.css'
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
+import formatAmount from "../../utils/formatAmount";
+
 
 const typeConfig: Record<
   TransactionType,
@@ -63,6 +68,14 @@ const TransactionTable = (props: Props) => {
     transactions = [], loading = false, sort = "",
     updateSort = () => { }
   } = props
+
+  const user = useSelector((s: RootState) => s.user)
+
+
+  const getPartyById = (pid: string) => {
+    return (user.user?.parties || []).filter(p => p.id === pid)[0]
+  }
+
   const sort_infos = sort.split(",").reduce<{ [k: string]: "" | "-" }>((p, c) => {
     if (c[0] === "-") {
       p[c.replace("-", "")] = "-"
@@ -74,11 +87,11 @@ const TransactionTable = (props: Props) => {
   }, {})
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-212.5">
+    <div className={style.table_container}>
+      <table className={style.table}>
         <thead>
-          <tr className="border-b border-border">
-            <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+          <tr className={style.table_head_tr}>
+            <th className={`${style.table_head_tr_th}`}>
               Date
               <button className="p-1" onClick={() => updateSort("date", sort_infos["date"] === "-" ? "" : "-")}>
 
@@ -90,7 +103,7 @@ const TransactionTable = (props: Props) => {
               </button>
             </th>
 
-            <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+            <th className={style.table_head_tr_th}>
               Description
               <button className="p-1" onClick={() => updateSort("description", sort_infos["date"] === "-" ? "" : "-")}>
                 {
@@ -102,7 +115,7 @@ const TransactionTable = (props: Props) => {
 
             </th>
 
-            <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+            <th className={style.table_head_tr_th}>
               Type
               <button className="p-1" onClick={() => updateSort("type", sort_infos["type"] === "-" ? "" : "-")}>
 
@@ -112,10 +125,9 @@ const TransactionTable = (props: Props) => {
                     <ArrowDown size={12} />
                 }
               </button>
-
             </th>
 
-            <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+            <th className={style.table_head_tr_th}>
               Party
               <button className="p-1" onClick={() => updateSort("party", sort_infos["party"] === "-" ? "" : "-")}>
 
@@ -128,11 +140,7 @@ const TransactionTable = (props: Props) => {
 
             </th>
 
-            {/* <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
-              Category
-            </th> */}
-
-            <th className="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+            <th className={`${style.table_head_tr_th}`} style={{ textAlign: "right" }}>
               Amount
               <button className="p-1" onClick={() => updateSort("amount", sort_infos["amount"] === "-" ? "" : "-")}>
 
@@ -154,17 +162,18 @@ const TransactionTable = (props: Props) => {
           {transactions.map((transaction) => {
             const config = typeConfig[transaction.type];
             const positive = (transaction.type === "INCOME" || transaction.type === "AR_PAYMENT" || transaction.type === "AP");
+            const party = getPartyById(transaction.party_id)
 
             return (
               <tr
                 key={transaction.id}
                 className="group border-b border-border/70 last:border-0 transition-colors hover:bg-background"
               >
-                <td className="px-6 py-4.5 text-sm text-text-secondary">
+                <td className={`${style.table_body_tr_td} text-sm text-text-secondary`}>
                   {formatDate(transaction.date)}
                 </td>
 
-                <td className="px-6 py-4.5">
+                <td className={style.table_body_tr_td}>
                   <Link
                     to={`/transactions/${transaction.id}`}
                     className="text-sm font-semibold text-text-primary transition-colors hover:text-primary-dark"
@@ -173,7 +182,7 @@ const TransactionTable = (props: Props) => {
                   </Link>
                 </td>
 
-                <td className="px-6 py-4.5">
+                <td className={style.table_body_tr_td}>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium">
                     <span
                       className="h-1.5 w-1.5 rounded-full"
@@ -186,32 +195,25 @@ const TransactionTable = (props: Props) => {
                   </span>
                 </td>
 
-                <td className="px-6 py-4.5 text-sm">
-                  {/* {transaction.party ? (
+                <td className={`${style.table_body_tr_td} text-sm`}>
+                  {party ? (
                     <span className="font-medium text-[#475569]">
-                      {transaction.party}
+                      {party.name}
                     </span>
                   ) : (
                     <span className="text-[#CBD5E1]">—</span>
-                  )} */}
+                  )}
                 </td>
 
-                {/* <td className="px-6 py-4.5 text-sm text-text-secondary">
-                  {transaction.type ?? "—"}
-                </td> */}
-
-                <td
-                  className={`px-6 py-4.5 text-right text-sm font-semibold ${positive ? "text-[#16A34A]" : "text-[#DC2626]"
-                    }`}
-                >
+                <td className={`${style.table_body_tr_td} text-right text-sm font-semibold ${positive ? "text-income" : "text-expense"}`}>
                   {positive ? "+" : "-"}
-                  ৳ {transaction.amount}
+                  {formatAmount(transaction.amount)}
                 </td>
 
-                <td className="px-4 py-4.5">
+                <td className={style.table_body_tr_td}>
                   <button
                     type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] opacity-0 transition-all hover:bg-border hover:text-[#475569] group-hover:opacity-100"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-text-disable opacity-0 transition-all hover:bg-border hover:text-[#475569] group-hover:opacity-100"
                   >
                     <MoreHorizontal size={17} />
                   </button>

@@ -4,52 +4,15 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { Transaction } from "../../types/transaction";
+import NoRecordsFound from "../NoRecordsFound";
 
-interface Transaction {
-  id: string;
-  name: string;
-  category: string;
-  date: string;
-  amount: number;
-  type: "income" | "expense";
+type Props = {
+  transactions?: Transaction[]
 }
+export function RecentTransactions(props: Props) {
+  const { transactions = [] } = props
 
-const transactions: Transaction[] = [
-  {
-    id: "1",
-    name: "Salary",
-    category: "Income",
-    date: "Aug 22, 2026",
-    amount: 42000,
-    type: "income",
-  },
-  {
-    id: "2",
-    name: "House Rent",
-    category: "Housing",
-    date: "Aug 20, 2026",
-    amount: 15000,
-    type: "expense",
-  },
-  {
-    id: "3",
-    name: "Groceries",
-    category: "Food",
-    date: "Aug 19, 2026",
-    amount: 3250,
-    type: "expense",
-  },
-  {
-    id: "4",
-    name: "Freelance",
-    category: "Income",
-    date: "Aug 17, 2026",
-    amount: 8500,
-    type: "income",
-  },
-];
-
-export function RecentTransactions() {
   return (
     <div className="rounded-2xl border border-[#E3EBE7] bg-white">
       <div className="flex items-center justify-between border-b border-[#EDF1EF] px-5 py-4">
@@ -58,23 +21,27 @@ export function RecentTransactions() {
             Recent transactions
           </h3>
 
-          <p className="mt-1 text-xs text-[#89958F]">
+          <p className="mt-1 text-xs text-text-lite">
             Your latest activity
           </p>
         </div>
 
         <Link
           to="/transactions"
-          className="text-xs font-semibold text-[#1C9A6E] hover:text-[#153E30]"
+          className="text-xs font-semibold text-primary hover:text-primary-dark"
         >
           View all
         </Link>
       </div>
 
+      {
+        transactions.length === 0 && <NoRecordsFound />
+      }
+
       <div className="divide-y divide-[#EDF1EF]">
         {transactions.map((transaction) => {
           const income =
-            transaction.type === "income";
+            transaction.type === "INCOME";
 
           return (
             <div
@@ -82,11 +49,10 @@ export function RecentTransactions() {
               className="flex items-center gap-3 px-5 py-4"
             >
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                  income
-                    ? "bg-[#E8F5EF] text-[#1C9A6E]"
-                    : "bg-[#F4F1ED] text-[#8A7967]"
-                }`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${income
+                  ? "bg-[#E8F5EF] text-[#1C9A6E]"
+                  : "bg-[#F4F1ED] text-[#8A7967]"
+                  }`}
               >
                 {income ? (
                   <ArrowDownLeft className="h-4 w-4" />
@@ -97,21 +63,20 @@ export function RecentTransactions() {
 
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-[#33443C]">
-                  {transaction.name}
+                  {transaction.description}
                 </p>
 
                 <p className="mt-0.5 text-[11px] text-[#9AA6A1]">
-                  {transaction.category} ·{" "}
+                  {transaction.type} ·{" "}
                   {transaction.date}
                 </p>
               </div>
 
               <p
-                className={`text-sm font-bold ${
-                  income
-                    ? "text-[#1C9A6E]"
-                    : "text-[#33443C]"
-                }`}
+                className={`text-sm font-bold ${income
+                  ? "text-[#1C9A6E]"
+                  : "text-[#33443C]"
+                  }`}
               >
                 {income ? "+" : "−"}৳
                 {transaction.amount.toLocaleString()}

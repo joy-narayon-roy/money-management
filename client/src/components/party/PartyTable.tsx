@@ -38,7 +38,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-left">
               <button
                 type="button"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("name", sortInfo["name"] === "" ? "-" : "")}
               >
                 Name
@@ -55,7 +55,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-left">
               <button
                 type="button"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("role", sortInfo["role"] === "" ? "-" : "")}
               >
                 Role
@@ -72,7 +72,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-left">
               <button
                 type="button"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("total_transaction", sortInfo["total_transaction"] === "" ? "-" : "")}
               >
                 Transactions
@@ -89,7 +89,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-right">
               <button
                 type="button"
-                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("total", sortInfo["total"] === "" ? "-" : "")}
 
               >
@@ -107,7 +107,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-right">
               <button
                 type="button"
-                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("paid", sortInfo["paid"] === "" ? "-" : "")}
               >
                 Paid
@@ -125,7 +125,7 @@ const PartyTable = ({
             <th className="px-6 py-3.5 text-right">
               <button
                 type="button"
-                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]"
+                className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-disable"
                 onClick={() => updateSort("due", sortInfo["due"] === "" ? "-" : "")}
               >
                 Due
@@ -169,7 +169,7 @@ const PartyTable = ({
                   No parties found
                 </p>
 
-                <p className="mt-1 text-xs text-[#94A3B8]">
+                <p className="mt-1 text-xs text-text-disable">
                   Try changing your search or filters.
                 </p>
               </td>
