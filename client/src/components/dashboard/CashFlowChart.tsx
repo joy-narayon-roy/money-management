@@ -48,12 +48,6 @@ export function CashFlowChart({
   ],
 }: Props) {
 
-  const options: Option[] = [{
-    label: "This year",
-    value: "THIS_YEAR"
-  },
-  ...selectOptions
-  ]
 
   return (
     <div className="rounded-2xl border border-[#E3EBE7] bg-white p-5 sm:p-6">
@@ -69,7 +63,7 @@ export function CashFlowChart({
         </div>
 
         <select onChange={onChange} className="h-9 rounded-lg border border-[#E1E9E5] bg-white px-3 text-xs text-[#63716C] outline-none focus:border-[#1C9A6E]">
-          {options.map((opt, i) => <option key={i} value={opt.value} >{opt.label}</option>)}
+          {selectOptions.map((opt, i) => <option key={i} value={opt.value} >{opt.label}</option>)}
         </select>
       </div>
 

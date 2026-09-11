@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import {
     TransactionSummaryCards,
@@ -15,6 +15,7 @@ import { compressToBase64 } from "lz-string";
 function Transactions() {
     const { summary } = useSelector((s: RootState) => s.summary)
     const { token = "" } = useSelector((s: RootState) => s.auth)
+    const nav = useNavigate()
     const [sp, setSp] = useSearchParams()
     const sort = sp.get("sort") || ""
 
@@ -24,12 +25,19 @@ function Transactions() {
         const json_str = JSON.stringify(transactions)
         const data_str = compressToBase64(json_str)
 
-        const sp = new URLSearchParams({
-            type: "create_transaction_list",
-            data: data_str,
+        // const sp = new URLSearchParams({
+        //     type: "transaction",
+        //     data: data_str,
+        // })
+
+        nav(`/preview?type=transaction`, {
+            state: {
+                type: "transaction",
+                data: data_str
+            },
         })
 
-        window.open(`/preview?${sp.toString()}`, "_blank")
+        // window.open(`/preview?${sp.toString()}`, "_blank")
     }
 
     const updateSort = (key: string, order: "" | "-") => {

@@ -1,164 +1,34 @@
-import { useSearchParams } from "react-router-dom";
-import {
-  Create_Transaction_LIST,
-  type PreviewType,
-} from "../../types/preview";
+import { useLocation } from "react-router-dom";
 
 import type {
   CreateTransactionFormData,
-  TransactionType,
 } from "../../types/transaction";
 
 import { format } from "date-fns";
 import { decompressFromBase64 } from "lz-string";
-import get_transaction_type_color, { get_transaction_type_sign } from "../../utils/get_transaction_type_color";
+import type { ReducerType, TableData } from "./PreviewTable";
+import PreviewTable from "./PreviewTable";
 
-type TableData = {
-  date: string;
-  title: string;
-  amount: number | string;
-  total: number;
-  type: TransactionType;
-};
-
-type ReducerType = {
-  tableData: TableData[];
-  total: number;
-};
-
-function PreviewTable({ tableData, total = 0 }: ReducerType) {
-  // Group rows by date
-  const groupedData = tableData.reduce<Record<string, TableData[]>>(
-    (groups, item) => {
-      if (!groups[item.date]) {
-        groups[item.date] = [];
-      }
-
-      groups[item.date].push(item);
-
-      return groups;
-    },
-    {}
-  );
-
-  return (
-    <div className="max-w-3xl mx-auto mt-8 overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-      <table className="w-full min-w-150 text-left text-sm text-gray-700">
-        <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
-          <tr>
-            <th className="w-40 px-6 py-4 font-semibold">
-              Date
-            </th>
-
-            <th className="px-6 py-4 font-semibold">
-              Title
-            </th>
-
-            <th className="px-6 py-4 text-right font-semibold">
-              Amount
-            </th>
-
-            <th className="px-6 py-4 text-right font-semibold">
-              Total
-            </th>
-          </tr>
-        </thead>
-
-        <tbody className="divide-y divide-gray-100">
-          {Object.entries(groupedData).map(([date, rows]) =>
-            rows.map((tdi, i) => (
-              <tr
-                key={`${date}-${i}`}
-                className="transition-colors hover:bg-gray-50"
-              >
-                {/* Date */}
-                {i === 0 && (
-                  <td
-                    rowSpan={rows.length}
-                    className="
-                      w-40
-                      whitespace-nowrap
-                      px-6
-                      py-4
-                      text-center
-                      align-middle
-                      text-xs
-                      font-semibold
-                      uppercase
-                      tracking-wider
-                      text-gray-500
-                      bg-gray-50
-                    "
-                  >
-                    {date}
-                  </td>
-                )}
-
-                {/* Title */}
-                <td
-                  className={
-                    "px-6 py-4 font-medium " + get_transaction_type_color(tdi.type)}
-                >
-                  {tdi.title} {" "}
-                  {tdi.type === "AP" && <>(AP)</>}
-                  {tdi.type === "AP_PAYMENT" && <del>(AP)</del>}
-                  {tdi.type === "AR" && <>(AR)</>}
-                  {tdi.type === "AR_PAYMENT" && <del>(AR)</del>}
-                </td>
-
-                {/* Amount */}
-                <td
-                  className={`whitespace-nowrap px-6 py-4 text-right font-medium ${get_transaction_type_color(tdi.type)}`}
-                >
-                  {get_transaction_type_sign(tdi.type)}
-                  {tdi.amount}
-                </td>
-
-                {/* Running Total */}
-                <td className="whitespace-nowrap px-6 py-4 text-right font-semibold text-gray-900">
-                  {tdi.total}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-
-        <tfoot className="border-t-2 border-gray-200 bg-gray-50">
-          <tr>
-            <td
-              colSpan={2}
-              className="px-6 py-4 font-semibold text-gray-700"
-            >
-              Total
-            </td>
-
-            <td className="px-6 py-4"></td>
-
-            <td
-              className={`px-6 py-4 text-right text-base font-bold ${total >= 0
-                ? "text-green-600"
-                : "text-red-600"
-                }`}
-            >
-              {total}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  );
-}
 
 
 
 export default function Preview() {
-  const [sp] = useSearchParams({});
+  const { state } = useLocation()
+  const date_type: string = state['type'] || ""
+  const data_str: string = state["data"] || ""
+  if (date_type === "transaction") {
+    const data_s = JSON.parse(decompressFromBase64(data_str)) as CreateTransactionFormData[];
 
-  const date_type = (sp.get("type") || "") as PreviewType;
-  const data_str = sp.get("data") || "{}";
-
-  if (date_type === Create_Transaction_LIST) {
-    const data = JSON.parse(decompressFromBase64(data_str)) as CreateTransactionFormData[];
+    const data: CreateTransactionFormData[] = [
+      // {
+      //   date: "01/01/2026",
+      //   amount: 22310,
+      //   description: "Balance B/D",
+      //   type: "INCOME",
+      //   party_id: ""
+      // },
+      ...data_s
+    ]
 
     let table_data: ReducerType = {
       tableData: [],
