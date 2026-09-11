@@ -28,6 +28,14 @@ type Result struct {
 	Monthly []MonthlySummary `json:"monthly" gorm:"-"`
 }
 
+// dbDailyScan is the scan target for the LAST_1 (rolling 30-day, daily
+// bucketed) query.
+type dbDailyScan struct {
+	DayKey  string `json:"day_key"`
+	Income  int64  `json:"income"`
+	Expense int64  `json:"expense"`
+}
+
 func (s *UserServiceStruct) GetTransactionMonthlySummary(
 	id uuid.UUID,
 	opt *GetTransactionMonthlySummaryOptions,
@@ -38,9 +46,9 @@ func (s *UserServiceStruct) GetTransactionMonthlySummary(
 	now := time.Now().UTC()
 	currentMonthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
 
-	// LAST_1 is a special case: a rolling 30-day window rather than
-	// a calendar-month bucket, so it can't use the generic monthly
-	// grouping logic below (a 30-day window can span two YYYY-MM keys).
+	// LAST_1 is a special case: daily buckets over a rolling 30-day
+	// window rather than monthly buckets, so it can't use the generic
+	// monthly grouping logic below.
 	if opt.Duration == MonthlyDuration_LAST_1 {
 		return s.getLast30DaySummary(id, now)
 	}
@@ -109,36 +117,53 @@ func (s *UserServiceStruct) GetTransactionMonthlySummary(
 	return &res, nil
 }
 
-// getLast30DaySummary returns a single-bucket summary covering the
-// rolling 30-day window ending now (inclusive), regardless of
-// calendar-month boundaries.
+// getLast30DaySummary returns one bucket per day for the rolling
+// 30-day window ending today (inclusive), regardless of calendar-month
+// boundaries — e.g. "SEP 1", "SEP 2", ... "AUG 13" style labels.
 func (s *UserServiceStruct) getLast30DaySummary(id uuid.UUID, now time.Time) (*Result, error) {
-	rangeStart := now.AddDate(0, 0, -30)
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	rangeStart := todayStart.AddDate(0, 0, -29) // 29 days back + today = 30 days total
 
-	var data dbMonthlyScan
+	dailyList := make([]MonthlySummary, 30)
+	dayIndexMap := make(map[string]int, 30)
+
+	for i := 0; i < 30; i++ {
+		d := rangeStart.AddDate(0, 0, i)
+		key := d.Format("2006-01-02")
+
+		dailyList[i] = MonthlySummary{
+			Month:   strings.ToUpper(d.Format("Jan 2")), // e.g. "SEP 1"
+			Income:  0,
+			Expense: 0,
+		}
+		dayIndexMap[key] = i
+	}
+
+	var dailyData []dbDailyScan
 
 	err := config.DB.
 		Model(&models.Transaction{}).
 		Where("user_id = ?", id).
 		Where("date >= ?", rangeStart).
-		Where("date <= ?", now).
+		Where("date < ?", todayStart.AddDate(0, 0, 1)).
 		Select(`
+			TO_CHAR(date, 'YYYY-MM-DD') AS day_key,
 			COALESCE(SUM(CASE WHEN type = ? THEN amount ELSE 0 END), 0) AS income,
 			COALESCE(SUM(CASE WHEN type = ? THEN amount ELSE 0 END), 0) AS expense
 		`, models.TransactionTypeIncome, models.TransactionTypeExpense).
-		Scan(&data).Error
+		Group("TO_CHAR(date, 'YYYY-MM-DD')").
+		Scan(&dailyData).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &Result{
-		Monthly: []MonthlySummary{
-			{
-				Month:   strings.ToUpper(now.Format("Jan")),
-				Income:  data.Income,
-				Expense: data.Expense,
-			},
-		},
-	}, nil
+	for _, data := range dailyData {
+		if idx, exists := dayIndexMap[data.DayKey]; exists {
+			dailyList[idx].Income = data.Income
+			dailyList[idx].Expense = data.Expense
+		}
+	}
+
+	return &Result{Monthly: dailyList}, nil
 }
