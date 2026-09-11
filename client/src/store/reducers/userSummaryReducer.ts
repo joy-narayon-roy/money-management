@@ -1,6 +1,6 @@
 import api from "../../api";
 import { addTransaction } from "./transactionReducer";
-import type { Summary } from "../../types/summary";
+import type { Monthly, Summary } from "../../types/summary";
 import {
   createAsyncThunk,
   createSlice,
@@ -21,6 +21,23 @@ export const loadSummary = createAsyncThunk(
       throw new Error("invalid token");
     }
     return await api.summary.getSummary(token);
+  },
+);
+
+export const updateSummaryMonthly = createAsyncThunk(
+  "user_summary/updateSummaryMonthly",
+  async ({
+    token,
+    duration = "",
+  }: {
+    token: string;
+    duration: string;
+  }): Promise<Monthly[]> => {
+    if (!token) {
+      throw new Error("invalid token");
+    }
+
+    return api.summary.getMonthlySummary(token, duration);
   },
 );
 
@@ -73,6 +90,21 @@ const userSummarySclice = createSlice({
       } else if (action.payload.transaction.type === "EXPENSE") {
         state.summary.total_expense += action.payload.transaction.amount;
       }
+    });
+
+    builder.addCase(updateSummaryMonthly.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(updateSummaryMonthly.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.summary.monthly = action.payload;
+    });
+    builder.addCase(updateSummaryMonthly.rejected, (state) => {
+      state.loading = false;
+      state.error = "failed to load monthly";
     });
 
     builder.addCase(loadSummary.pending, (state) => {

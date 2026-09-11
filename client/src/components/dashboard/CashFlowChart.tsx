@@ -25,13 +25,27 @@ type Props = {
 export function CashFlowChart({
   data = [],
   onChange = () => { },
-  selectOptions = [{
-    label: "Last 12 months",
-    value: "LAST_12"
-  }, {
-    label: "Last 7 months",
-    value: "LAST_7"
-  }],
+  /**
+   MonthlyDuration_THIS_YEAR MonthlyDuration = "THIS_YEAR"
+  MonthlyDuration_LAST_12   MonthlyDuration = "LAST_12"
+  MonthlyDuration_LAST_6    MonthlyDuration = "LAST_6"
+  MonthlyDuration_LAST_1    MonthlyDuration = "LAST_1"
+   */
+  selectOptions = [
+    {
+      label: "This year",
+      value: "THIS_YEAR"
+    }, {
+      label: "Last 12 months",
+      value: "LAST_12"
+    }, {
+      label: "Last 6 months",
+      value: "LAST_6"
+    }, {
+      label: "Last month",
+      value: "LAST_1"
+    },
+  ],
 }: Props) {
 
   const options: Option[] = [{

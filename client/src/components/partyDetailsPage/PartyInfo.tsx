@@ -68,7 +68,7 @@ const PartyInfo = ({ party }: Props) => {
 
                     <Link
                         to={`/transactions?party=${party.id || ""}`}
-                        className="mt-5 hidden items-center gap-1.5 text-sm font-semibold text-primary transition hover:text-primary-hover sm:inline-flex"
+                        className="mt-5 items-center gap-1.5 text-sm font-semibold text-primary transition hover:text-primary-hover sm:inline-flex"
                     >
                         View all
                         <ArrowRight size={15} />

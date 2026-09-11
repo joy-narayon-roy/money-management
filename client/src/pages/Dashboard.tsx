@@ -12,12 +12,13 @@ import { QuickActions } from "../components/dashboard/QuickActions";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { useEffect } from "react";
-import { loadSummary, } from "../store/reducers/userSummaryReducer";
+import { loadSummary, updateSummaryMonthly, } from "../store/reducers/userSummaryReducer";
 import AppLayout from "../components/layout/AppLayout";
+import { Loading } from "../components/Loading";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>()
-  const { user } = useSelector((s: RootState) => s.user)
+  const { user, loading } = useSelector((s: RootState) => s.user)
   const token = useSelector((s: RootState) => s.auth.token)
   const summaryState = useSelector((s: RootState) => s.summary)
 
@@ -35,8 +36,23 @@ export default function Dashboard() {
     }
   }, [token, summaryState.summaryLoaded, dispatch])
 
-
   const { summary } = summaryState
+
+  const onChange = (event: React.ChangeEvent<HTMLSelectElement, HTMLSelectElement>) => {
+    if (summaryState.loading) {
+      return
+    }
+    const stmnt = updateSummaryMonthly({
+      token: token || "", duration: event.target.value
+    })
+    dispatch(stmnt)
+  }
+
+
+
+  if (loading) {
+    return <Loading fullScreen />
+  }
 
   return (
     <AppLayout>
@@ -89,7 +105,7 @@ export default function Dashboard() {
 
         {/* Main chart + actions */}
         <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_300px]">
-          <CashFlowChart data={summary.monthly} />
+          <CashFlowChart onChange={onChange} data={summary.monthly} />
 
           <div className="rounded-2xl border border-[#E3EBE7] bg-white p-5">
             <QuickActions />

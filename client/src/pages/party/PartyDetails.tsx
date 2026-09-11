@@ -12,6 +12,7 @@ import { TransactionPagination, TransactionTable } from "../../components/transa
 import TransactionTableContainer from "../../components/transactionsPage/TransactionTableContainer";
 
 import usePartyInfo from "../../hooks/usePartyInfo";
+import NoRecordsFound from "../../components/NoRecordsFound";
 
 
 
@@ -29,7 +30,7 @@ function PartyDetails() {
 
     return (
         <main className="min-h-full bg-background">
-            <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-8">
+            <div className="mx-auto max-w-[1600px] px-2 py-8 lg:px-8">
                 {partyState.loading && <Loading />}
                 {partyState.party && <PartyHeader party={partyState.party} />}
 
@@ -40,29 +41,33 @@ function PartyDetails() {
                 </div>
 
                 <div className="my-6 grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-                    {partyState.party &&
+                    {!partyState.loading && partyState.party &&
                         <PartyInfo party={partyState.party} />
                     }
                 </div>
 
 
 
-                <TransactionTableContainer>
-                    <div className="mt-2">
-                        <TransactionTable
-                            sort={sort}
-                            updateSort={updateSort}
-                            transactions={transactionState.transactions}
-                            loading={transactionState.loading}
-                        />
-                    </div>
+                {!transactionState.loading && <TransactionTableContainer>
+                    {
+                        transactionState.transactions.length === 0 ? <NoRecordsFound message="No transaction found!" /> :
+                            <>
+                                <div className="mt-2">
+                                    <TransactionTable
+                                        sort={sort}
+                                        updateSort={updateSort}
+                                        transactions={transactionState.transactions}
+                                        loading={transactionState.loading}
+                                    />
+                                </div>
+                                <TransactionPagination
+                                    pagination={transactionState.pagination}
+                                    goToPage={goToPage} />
+                            </>
+                    }
 
-                    <TransactionPagination
-                        pagination={transactionState.pagination}
-                        // openPreview={openPreview}
-                        goToPage={goToPage} />
                 </TransactionTableContainer>
-
+                }
 
             </div>
         </main>

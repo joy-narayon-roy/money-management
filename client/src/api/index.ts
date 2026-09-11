@@ -7,6 +7,7 @@ import { createPartyRequest } from "./party/createParty";
 import getParties from "./party/getParties";
 import getPartyById from "./party/getPartyById";
 import { updatePartyRequest } from "./party/updateParty";
+import getMonthlySummary from "./summary/getMonthlySummary";
 import getSummary from "./summary/getSummary";
 import getTransactionByID from "./transaction/getTransactionById";
 
@@ -15,6 +16,7 @@ export default {
   auth,
   summary: {
     getSummary,
+    getMonthlySummary,
   },
   party: {
     getParties,
