@@ -18,17 +18,14 @@ function Transactions() {
     const nav = useNavigate()
     const [sp, setSp] = useSearchParams()
     const sort = sp.get("sort") || ""
+    const start_date = sp.get("start_date")
+    const end_date = sp.get("end_date")
 
     const { transactions, pagination, loading, error, goToPage } = useTransactions(token || "");
 
     const openPreview = () => {
         const json_str = JSON.stringify(transactions)
         const data_str = compressToBase64(json_str)
-
-        // const sp = new URLSearchParams({
-        //     type: "transaction",
-        //     data: data_str,
-        // })
 
         nav(`/preview?type=transaction`, {
             state: {
@@ -44,6 +41,25 @@ function Transactions() {
         setSp(p => {
             p.set("sort", `${order}${key}`)
             return p
+        })
+    }
+
+    const onFilterSubmited = (start_date?: string, end_date?: string) => {
+        setSp(pre => {
+            if (!start_date) {
+                pre.delete("start_date")
+            } else {
+                pre.set("start_date", start_date)
+            }
+
+            if (!end_date) {
+                pre.delete("end_date")
+            } else {
+                pre.set("end_date", end_date)
+            }
+
+
+            return pre
         })
     }
 
@@ -75,7 +91,7 @@ function Transactions() {
                 {/* Transactions */}
                 <section className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(15,23,42,0.04)] ring-1 ring-[#E2E8F0]/70">
                     <div className="px-6 pt-6">
-                        <TransactionFilters />
+                        <TransactionFilters onApply={onFilterSubmited} from={start_date || ""} to={end_date || ""} />
                     </div>
 
                     <div className="mt-3 px-6">

@@ -7,6 +7,8 @@ export interface QueryOptions {
   type?: "ALL" | TransactionType;
   sort?: string;
   party?: string[];
+  start_date?: string | null;
+  end_date?: string | null;
 }
 
 export interface TransactionsResult {

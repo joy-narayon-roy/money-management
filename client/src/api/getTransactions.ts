@@ -7,6 +7,8 @@ export interface QueryOptions {
   type?: "ALL" | TransactionType;
   party?: string[];
   sort?: string;
+  start_date?: string | null;
+  end_date?: string | null;
 }
 
 export interface TransactionsResult {
@@ -42,6 +44,13 @@ export default async function getTransactions(
 
   if (opt.sort && opt.sort !== "") {
     sp.set("sort", opt.sort);
+  }
+
+  if (opt.start_date) {
+    sp.set("start_date", opt.start_date);
+  }
+  if (opt.end_date) {
+    sp.set("end_date", opt.end_date);
   }
 
   const { data } = await api.get<TransactionsResult>(

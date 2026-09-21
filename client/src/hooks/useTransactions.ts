@@ -44,6 +44,8 @@ export default function useTransactions(token: string) {
   const sort = sp.get("sort") || "";
   const parties = sp.getAll("party");
   const party_str = JSON.stringify(parties);
+  const start_date = sp.get("start_date");
+  const end_date = sp.get("end_date");
 
   const [state, setState] = useState<State>(initialState);
 
@@ -61,7 +63,10 @@ export default function useTransactions(token: string) {
       page,
       sort,
       party: JSON.parse(party_str),
+      start_date,
+      end_date,
     };
+    console.log(queryOpt)
 
     api
       .getTransactions(token, queryOpt)
@@ -82,7 +87,17 @@ export default function useTransactions(token: string) {
           error: err?.message || "failed to get transactions",
         }));
       });
-  }, [queryKey, token, current_tab, limit, page, sort, party_str]);
+  }, [
+    queryKey,
+    token,
+    current_tab,
+    limit,
+    page,
+    sort,
+    party_str,
+    start_date,
+    end_date,
+  ]);
 
   const goToPage = (nextPage: number) => {
     setSp((pre) => {
