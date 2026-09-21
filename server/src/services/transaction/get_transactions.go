@@ -4,6 +4,7 @@ import (
 	"mm/config"
 	"mm/src/models"
 	"mm/src/utils"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,11 +17,13 @@ var sortWhiteList = map[string]string{
 }
 
 type TransactionQuery struct {
-	Limit uint                    `query:"limit"`
-	Page  uint                    `query:"page"`
-	Type  *models.TransactionType `query:"type"`
-	Party []string                `query:"party"`
-	Sort  string                  `query:"sort"`
+	Limit     uint                    `query:"limit"`
+	Page      uint                    `query:"page"`
+	Type      *models.TransactionType `query:"type"`
+	Party     []string                `query:"party"`
+	StartDate *string                 `query:"start_date"`
+	EndDate   *string                 `query:"end_date"`
+	Sort      string                  `query:"sort"`
 }
 
 type PaginationType struct {
@@ -63,6 +66,27 @@ func (TransactionService) GetTransactions(uid uuid.UUID, opt TransactionQuery) (
 	}
 	if len(opt.Party) > 0 {
 		baseQuery = baseQuery.Where("party_id in (?)", opt.Party)
+	}
+
+	if opt.StartDate != nil {
+		startDate, err := time.Parse("2006-01-02", *opt.StartDate)
+		if err != nil {
+			return nil, err
+		}
+
+		baseQuery = baseQuery.Where("date >= ?", startDate)
+	}
+
+	if opt.EndDate != nil {
+		endDate, err := time.Parse("2006-01-02", *opt.EndDate)
+		if err != nil {
+			return nil, err
+		}
+
+		// Include the entire end date
+		endDate = endDate.AddDate(0, 0, 1)
+
+		baseQuery = baseQuery.Where("date < ?", endDate)
 	}
 
 	result := &TransactionQueryResult{}
