@@ -1,6 +1,8 @@
 export type TransactionType =
   | "INCOME"
   | "EXPENSE"
+  | "INCOME_AR"
+  // | "INCOME_AR_PAYMENT" 
   | "AR"
   | "AR_PAYMENT"
   | "AP"

@@ -36,7 +36,12 @@ export default function CreateTransaction() {
 
   const parties = (userState.user?.parties || [])
   const party_options: Option[] = parties
-    .filter(p => p.role === (roleForFormType[form.type] ?? form.type))
+    .filter(p => {
+      if (form.type === "INCOME") {
+        return p.role === "INCOME" || p.role==="INCOME_AR"
+      }
+      return p.role === (roleForFormType[form.type] ?? form.type)
+    })
     .map((p): Option => ({ value: p.id, label: p.name }))
 
   const handleChange = <K extends keyof CreateTransactionFormData>(field: K, value: CreateTransactionFormData[K]) => {
@@ -77,7 +82,7 @@ export default function CreateTransaction() {
     if (token) {
 
       api.createTransaction(token, payload)
-      .then(created_transaction => {
+        .then(created_transaction => {
           dispatch(addTransaction({ transaction: created_transaction }))
           nav("/transactions")
         })

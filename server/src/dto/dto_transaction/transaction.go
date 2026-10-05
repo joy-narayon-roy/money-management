@@ -107,6 +107,8 @@ func (CreateTransactionRequest) Parse(json_bytes []byte) (CreateTransactionReque
 	} else {
 		if trans_type == "INCOME" {
 			info.Type = models.TransactionTypeIncome
+		} else if trans_type == "INCOME_AR" {
+			info.Type = models.TransactionTypeIncomeAR
 		} else if trans_type == "EXPENSE" {
 			info.Type = models.TransactionTypeExpense
 		} else if trans_type == "AP" {

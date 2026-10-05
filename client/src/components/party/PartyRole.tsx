@@ -29,6 +29,11 @@ const roleConfig: Record<
     color: "#2563EB",
     dot: "#3B82F6",
   },
+  INCOME_AR: {
+    label: "Income AR",
+    color: "#2563EB",
+    dot: "#3B82F6",
+  },
 
   AP: {
     label: "Payable",

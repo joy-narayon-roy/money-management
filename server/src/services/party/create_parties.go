@@ -15,6 +15,8 @@ func party_role_validity(role string) bool {
 	switch role {
 	case string(models.PartyRoleIncome):
 		return true
+	case string(models.PartyRoleIncome_AR):
+		return true
 	case string(models.PartyRoleExpense):
 		return true
 	case string(models.PartyRoleAP):

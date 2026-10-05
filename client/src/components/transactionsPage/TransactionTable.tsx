@@ -18,6 +18,11 @@ const typeConfig: Record<
     color: "#15803D",
     dot: "#22C55E",
   },
+  INCOME_AR: {
+    label: "Receivable",
+    color: "#2563EB",
+    dot: "#3B82F6",
+  },
   EXPENSE: {
     label: "Expense",
     color: "#DC2626",
@@ -196,13 +201,15 @@ const TransactionTable = (props: Props) => {
                 </td>
 
                 <td className={`${style.table_body_tr_td} text-sm`}>
-                  {party ? (
-                    <span className="font-medium text-[#475569]">
-                      {party.name}
-                    </span>
-                  ) : (
-                    <span className="text-[#CBD5E1]">—</span>
-                  )}
+                  <Link to={`/parties/${party.id}`}>
+                    {party ? (
+                      <span className="font-medium text-[#475569]">
+                        {party.name}
+                      </span>
+                    ) : (
+                      <span className="text-[#CBD5E1]">—</span>
+                    )}
+                  </Link>
                 </td>
 
                 <td className={`${style.table_body_tr_td} text-right text-sm font-semibold ${positive ? "text-income" : "text-expense"}`}>

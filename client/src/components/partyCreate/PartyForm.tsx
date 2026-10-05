@@ -1,30 +1,9 @@
+import options from "../../data/partyOptions";
 import type { CreatePartyFormData, Party, PartyFormDataValidationError } from "../../types/party"
 import Input from "../Input";
 import InputField from "../InputField";
-import SelectInput, { type SelectOption } from "../SelectInput";
+import SelectInput from "../SelectInput";
 
-const roleOptions: SelectOption[] = [
-    {
-        label: "Select Role",
-        value: ""
-    },
-    {
-        label: "Income",
-        value: "INCOME"
-    },
-    {
-        label: "Expense",
-        value: "EXPENSE"
-    },
-    {
-        label: "Account Payable",
-        value: "AP"
-    },
-    {
-        label: "Account Recivable",
-        value: "AR"
-    }
-]
 
 type Props = {
     form: CreatePartyFormData
@@ -56,7 +35,7 @@ export default function PartyForm({ form, onChange, validation_error: verr }: Pr
                     value={role}
                     required
                     onChange={(e) => onChange("role", e.target.value)}
-                    options={roleOptions}
+                    options={options.party.role.role_options}
                     error={verr?.role}
 
                 />

@@ -1,6 +1,6 @@
 import type { BaseInterface } from "./baseInterface";
 
-export type PartyRoleType = "INCOME" | "EXPENSE" | "AR" | "AP";
+export type PartyRoleType = "INCOME"|"INCOME_AR" | "EXPENSE" | "AR" | "AP";
 
 export interface Party extends BaseInterface {
   user_id: string;

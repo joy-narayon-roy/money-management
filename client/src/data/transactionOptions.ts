@@ -20,6 +20,14 @@ const transaction_type_group_options: GroupOption[] = [
     label: "Receivable",
     value: [
       {
+        value: "INCOME_AR",
+        label: "Income Receivable",
+      },
+      // {
+      //   value: "INCOME_AR_PAYMENT",
+      //   label: "Income Receivable",
+      // },
+      {
         value: "AR",
         label: "Accounts Receivable",
       },
@@ -47,6 +55,8 @@ const transaction_type_group_options: GroupOption[] = [
 const tr_opt: TransactionType[] = [
   "INCOME",
   "EXPENSE",
+  "INCOME_AR",
+  // "INCOME_AR_PAYMENT",
   "AR",
   "AR_PAYMENT",
   "AP",

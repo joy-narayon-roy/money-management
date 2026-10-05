@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 const tabs = [
   { label: "All", value: "ALL" },
   { label: "Income", value: "INCOME" },
+  { label: "Income A/R", value: "INCOME_AR" },
   { label: "Expense", value: "EXPENSE" },
   { label: "Receivable", value: "AR" },
   { label: "AR payment", value: "AR_PAYMENT" },

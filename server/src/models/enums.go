@@ -3,8 +3,9 @@ package models
 type TransactionType string
 
 const (
-	TransactionTypeIncome  TransactionType = "INCOME"
-	TransactionTypeExpense TransactionType = "EXPENSE"
+	TransactionTypeIncome   TransactionType = "INCOME"
+	TransactionTypeIncomeAR TransactionType = "INCOME_AR"
+	TransactionTypeExpense  TransactionType = "EXPENSE"
 
 	TransactionTypeAR        TransactionType = "AR"
 	TransactionTypeARPayment TransactionType = "AR_PAYMENT"
@@ -16,8 +17,9 @@ const (
 type PartyRole string
 
 const (
-	PartyRoleIncome  PartyRole = "INCOME"
-	PartyRoleExpense PartyRole = "EXPENSE"
+	PartyRoleIncome    PartyRole = "INCOME"
+	PartyRoleIncome_AR PartyRole = "INCOME_AR"
+	PartyRoleExpense   PartyRole = "EXPENSE"
 
 	PartyRoleAR PartyRole = "AR"
 	PartyRoleAP PartyRole = "AP"
@@ -26,6 +28,7 @@ const (
 var (
 	TransactionTypes = []TransactionType{
 		TransactionTypeIncome,
+		TransactionTypeIncomeAR,
 		TransactionTypeExpense,
 
 		TransactionTypeAR,

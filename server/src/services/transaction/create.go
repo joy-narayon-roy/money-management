@@ -13,6 +13,7 @@ import (
 func (TransactionService) Create(uid uuid.UUID, info dto_transaction.CreateTransactionRequest) (*models.Transaction, *dto_transaction.TransactionValidationError, error) {
 	tr_party_role := string(info.Type)
 	tr_party_due := 0
+
 	if info.Type == models.TransactionTypeAPPayment {
 		tr_party_role = "AP"
 		tr_party_due = int(info.Amount)
@@ -22,42 +23,61 @@ func (TransactionService) Create(uid uuid.UUID, info dto_transaction.CreateTrans
 	}
 
 	var party models.Party
-
 	subQuery := config.DB.Table("party").
 		Select(`
 		party.id,
 		party.role,
 		CASE
-			WHEN party.role IN ('AP', 'AR') THEN COALESCE(t.total, 0) - COALESCE(t.paied, 0)
+			WHEN party.role IN ('AP', 'AR') 
+				THEN COALESCE(t.total, 0) - COALESCE(t.paied, 0)
 			ELSE 0
 		END AS due
 	`).
 		Joins(`
 		LEFT JOIN (
-			SELECT party_id, SUM(
+			SELECT 
+				party_id,
+				SUM(
 					CASE
-						WHEN type IN (
-							'INCOME', 'EXPENSE', 'AP', 'AR'
-						) THEN amount
+						WHEN type IN ('INCOME', 'EXPENSE', 'AP', 'AR') 
+							THEN amount
 						ELSE 0
 					END
-				) AS total, SUM(
+				) AS total,
+				SUM(
 					CASE
-						WHEN type IN ('AR_PAYMENT', 'AP_PAYMENT') THEN amount
+						WHEN type IN ('AR_PAYMENT', 'AP_PAYMENT') 
+							THEN amount
 						ELSE 0
 					END
 				) AS paied
 			FROM transaction
-			GROUP BY
-				party_id
+			GROUP BY party_id
 		) t ON t.party_id = party.id
 	`).
-		Where(`id = ? and user_id = ? and role = ?`, info.PartyID, uid, tr_party_role)
+		Where("party.id = ? AND party.user_id = ?", info.PartyID, uid)
 
-	err := config.DB.
-		Table("(?) as pd", subQuery).
-		Where("due >= ?", tr_party_due).
-		First(&party).Error
+	if tr_party_role == "INCOME" || tr_party_role == "INCOME_AR" {
+		subQuery = subQuery.Where(
+			"party.role = ? OR party.role = ?",
+			"INCOME",
+			"INCOME_AR",
+		)
+	} else {
+		subQuery = subQuery.Where(
+			"party.role = ?",
+			tr_party_role,
+		)
+	}
+
+	main_query := config.DB.
+		Table("(?) as pd", subQuery)
+
+	if tr_party_role != "INCOME_AR" {
+		main_query.Where("due >= ?", tr_party_due)
+	}
+
+	err := main_query.First(&party).Error
 
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
