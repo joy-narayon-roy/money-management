@@ -24,7 +24,11 @@ const typeConfig: Record<
         text: "text-[#DC2626]",
         dot: "bg-[#EF4444]",
     },
-    AR: {
+    INCOME_AR: {
+        label: "Receivable",
+        text: "text-[#2563EB]",
+        dot: "bg-[#3B82F6]",
+    }, AR: {
         label: "Receivable",
         text: "text-[#2563EB]",
         dot: "bg-[#3B82F6]",
