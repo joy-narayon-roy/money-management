@@ -77,7 +77,6 @@ export default function App() {
           <Route path="payables" element={<></>} />
           <Route path="reports" element={<></>} />
           <Route path="settings" element={<></>} />
-
         </Route>
 
 

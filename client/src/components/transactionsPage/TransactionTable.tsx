@@ -201,7 +201,7 @@ const TransactionTable = (props: Props) => {
                 </td>
 
                 <td className={`${style.table_body_tr_td} text-sm`}>
-                  <Link to={`/parties/${party.id}`}>
+                  <Link to={`/parties/${party?.id || ""}`}>
                     {party ? (
                       <span className="font-medium text-[#475569]">
                         {party.name}

@@ -44,6 +44,13 @@ export default function TransactionDateFilter({
     }).format(new Date(`${date}T00:00:00`));
   };
 
+  const setToday = () => {
+    const today_date = new Date()
+    setStartDate(today_date.toISOString().split("T")[0])
+    setEndDate(today_date.toISOString().split("T")[0])
+    handleApply()
+  }
+
   const label =
     from && to
       ? `${formatDate(from)} – ${formatDate(to)}`
@@ -56,10 +63,11 @@ export default function TransactionDateFilter({
   return (
     <div className="relative">
       {/* Trigger */}
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="
           inline-flex h-10 items-center gap-2
           rounded-lg border border-[#E2E8F0]
           bg-white px-3
@@ -68,23 +76,44 @@ export default function TransactionDateFilter({
           transition
           hover:bg-[#F8FAFC]
         "
-      >
-        <CalendarDays
-          size={16}
-          className="text-[#64748B]"
-        />
+        >
+          <CalendarDays
+            size={16}
+            className="text-[#64748B]"
+          />
 
-        <span>{label}</span>
-      </button>
+          <span>{label}</span>
+        </button>
+        <button
+          type="button"
+          onClick={setToday}
+          className="
+          inline-flex h-10 items-center gap-2
+          rounded-lg border border-[#E2E8F0]
+          bg-white px-3
+          text-sm font-medium text-[#1E293B]
+          shadow-sm
+          transition
+          hover:bg-[#F8FAFC]
+        "
+        >
+          <CalendarDays
+            size={16}
+            className="text-[#64748B]"
+          />
 
+          <span>Today</span>
+        </button>
+
+      </div>
       {/* Popover */}
       {open && (
         <div
           className="
-            absolute right-0 z-50 mt-2
-            w-[360px]
+          mt-3
+            w-90
             rounded-xl
-            border border-[#E2E8F0]
+            border border-border
             bg-white
             p-4
             shadow-lg
@@ -135,7 +164,7 @@ export default function TransactionDateFilter({
                 type="date"
                 value={startDate}
                 max={endDate || undefined}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => { setStartDate(e.target.value) }}
                 className="
                   h-10 w-full
                   rounded-lg

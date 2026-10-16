@@ -10,13 +10,15 @@ type Pagination = {
 type Props = {
   pagination?: Pagination;
   goToPage?: (page: number) => void;
-  openPreview?: () => void
+  openPreview?: () => void,
+  updateLimit?: (number: number) => void
 };
 
 const TransactionPagination = ({
   pagination = {},
   openPreview = () => { },
   goToPage = () => { },
+  updateLimit = () => { }
 }: Props) => {
   const {
     total = 0,
@@ -53,14 +55,23 @@ const TransactionPagination = ({
 
   return (
     <div className="flex items-center justify-between border-t border-border px-6 py-4">
-      <p className="text-xs text-text-secondary">
-        Showing{" "}
-        <span className="font-medium text-text-primary">
-          {start}–{end}
-        </span>{" "}
-        of{" "}
-        <span className="font-medium text-text-primary">{total}</span>
-      </p>
+      <div className="flex flex-row gap-2 items-center">
+        <p className="text-xs text-text-secondary">
+          Limit
+          <input
+            type="number" onChange={(e) => updateLimit(Number(e.target.value))} value={limit}
+            className="max-w-16 rounded-md ml-3 outline-0 text-gray-700 p-1 border-2 border-green-400"
+          />
+        </p>
+        <p className="text-xs text-text-secondary">
+          Showing{" "}
+          <span className="font-medium text-text-primary">
+            {start}–{end}
+          </span>{" "}
+          of{" "}
+          <span className="font-medium text-text-primary">{total}</span>
+        </p>
+      </div>
 
       <div className="flex flex-row gap-3">
         <div className="">
@@ -74,7 +85,7 @@ const TransactionPagination = ({
           <button
             disabled={currentPage <= 1}
             onClick={() => goToPage(currentPage - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] hover:bg-background disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-text-disable hover:bg-background disabled:opacity-40"
           >
             <ChevronLeft size={16} />
           </button>

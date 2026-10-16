@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
     LayoutDashboard,
     ArrowLeftRight,
     Users,
-    Wallet,
+    // Wallet,
     ArrowDownLeft,
     ArrowUpRight,
     BarChart3,
     Settings,
     LogOut,
     X,
-    ChevronDown,
-    ChevronRight,
     type LucideIcon,
+    Plus,
+    BookPlus,
+    ArrowUp,
 } from "lucide-react";
 
 import Logo from "../Logo";
@@ -41,16 +41,50 @@ const mainNavigation: NavigationItem[] = [
         href: "/parties",
         icon: Users,
     },
-    {
-        name: "Accounts",
-        href: "/accounts",
-        icon: Wallet,
-    },
+    // {
+    //     name: "Accounts",
+    //     href: "/accounts",
+    //     icon: Wallet,
+    // },
 ];
 
+const transactionNavigation: NavigationItem[] = [
+    {
+        name: "Transactions",
+        href: "/transactions",
+        icon: ArrowLeftRight
+    },
+    {
+        name: "Add Transaction",
+        href: "/transactions/new",
+        icon: Plus
+    },
+    {
+        name: "Add Multiple",
+        href: "/transactions/new/bulk",
+        icon: BookPlus
+    },
+    {
+        name: "Multiple Expenses",
+        href: "/transactions/new/bulk?type=expense",
+        icon: ArrowUp
+    },
+]
+// const businessNavigation: NavigationItem[] = [
+//     {
+//         name: "Business",
+//         href: "/business",
+//         icon: BriefcaseBusiness
+//     },
+//     {
+//         name: "Add Business",
+//         href: "/business/new",
+//         icon: MapPlus
+//     },
+// ]
 const financeNavigation: NavigationItem[] = [
     {
-        
+
         name: "Receivables",
         href: "/receivables",
         icon: ArrowDownLeft,
@@ -146,12 +180,13 @@ export function Sidebar({
                     "
                 >
                     <NavigationGroup
-                        label="MAIN"
+                        label="Menu"
                         items={mainNavigation}
                         onNavigate={onClose}
                     />
-
-                    <TransactionNavigation
+                    <NavigationGroup
+                        label="Transaction"
+                        items={transactionNavigation}
                         onNavigate={onClose}
                     />
 
@@ -263,216 +298,6 @@ function NavigationGroup({
                     </NavLink>
                 );
             })}
-        </div>
-    );
-}
-
-interface TransactionNavigationProps {
-    onNavigate: () => void;
-}
-
-function TransactionNavigation({
-    onNavigate,
-}: TransactionNavigationProps) {
-    const location = useLocation();
-
-    const isTransactionRoute =
-        location.pathname === "/transactions" ||
-        location.pathname.startsWith("/transactions/");
-
-    const [isOpen, setIsOpen] = useState(
-        isTransactionRoute
-    );
-
-    const nav = useNavigate()
-    return (
-        <div className="mb-7">
-            {/* Transactions */}
-            <button
-                type="button"
-                onClick={() => {
-                    nav("/transactions")
-                    setIsOpen((value) => !value)
-                }
-                }
-                aria-expanded={isOpen}
-                className={`
-                    mb-1
-                    flex
-                    w-full
-                    items-center
-                    gap-3
-                    rounded-lg
-                    px-3
-                    py-2.5
-                    text-sm
-                    transition
-                    ${isTransactionRoute
-                        ? "bg-[#E8F5EF] font-semibold text-primary"
-                        : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
-                    }
-                `}
-            >
-                <ArrowLeftRight className="h-4.5 w-4.5 shrink-0" />
-
-                <span className="truncate">
-                    Transactions
-                </span>
-
-                <span className="ml-auto shrink-0">
-                    {isOpen ? (
-                        <ChevronDown className="h-4 w-4" />
-                    ) : (
-                        <ChevronRight className="h-4 w-4" />
-                    )}
-                </span>
-            </button>
-
-            {/* Transaction submenu */}
-            {
-                isOpen && (
-                    <div className="ml-7 border-l border-[#E5EBE8] pl-3">
-                        <CreateTransactionNavigation
-                            onNavigate={onNavigate}
-                        />
-                    </div>
-                )
-            }
-        </div >
-    );
-}
-
-interface CreateTransactionNavigationProps {
-    onNavigate: () => void;
-}
-
-function CreateTransactionNavigation({
-    onNavigate,
-}: CreateTransactionNavigationProps) {
-    const location = useLocation();
-
-    const isCreateRoute =
-        location.pathname === "/transactions/new" ||
-        location.pathname.startsWith(
-            "/transactions/new"
-        );
-
-    const [isOpen, setIsOpen] = useState(isCreateRoute);
-
-    return (
-        <div>
-            {/* Create */}
-            <div
-                className={`
-                    mb-1
-                    flex
-                    items-center
-                    rounded-lg
-                    text-sm
-                    transition
-                    ${isCreateRoute
-                        ? "font-semibold text-primary"
-                        : "text-[#718079]"
-                    }
-                `}
-            >
-                {/* Create link */}
-                <NavLink
-                    to="/transactions/new"
-                    onClick={onNavigate}
-                    end
-                    className="
-                        flex
-                        min-w-0
-                        flex-1
-                        items-center
-                        rounded-lg
-                        px-3
-                        py-2
-                        transition
-                        hover:bg-[#F3F7F5]
-                        hover:text-primary-hover
-                    "
-                >
-                    <span className="truncate">
-                        Create
-                    </span>
-                </NavLink>
-
-                {/* Create toggle */}
-                <button
-                    type="button"
-                    onClick={() =>
-                        setIsOpen((value) => !value)
-                    }
-                    aria-label={
-                        isOpen
-                            ? "Collapse create menu"
-                            : "Expand create menu"
-                    }
-                    aria-expanded={isOpen}
-                    className="
-                        rounded-lg
-                        p-2
-                        transition
-                        hover:bg-[#F3F7F5]
-                        hover:text-primary-hover
-                    "
-                >
-                    {isOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5" />
-                    ) : (
-                        <ChevronRight className="h-3.5 w-3.5" />
-                    )}
-                </button>
-            </div>
-
-            {/* Create submenu */}
-            {isOpen && (
-                <div className="ml-5 border-l border-[#E5EBE8] pl-3">
-                    {/* Bulk */}
-                    <NavLink
-                        to="/transactions/new/bulk"
-                        onClick={onNavigate}
-                        className={({ isActive }) => `
-                            mb-1
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            transition
-                            ${isActive
-                                ? "font-semibold text-primary"
-                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
-                            }
-                        `}
-                    >
-                        Multiple
-                    </NavLink>
-
-                    {/* Bulk Expense */}
-                    <NavLink
-                        to="/transactions/new/bulk?type=expense"
-                        onClick={onNavigate}
-                        className={({ isActive }) => `
-                            mb-1
-                            block
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            transition
-                            ${isActive
-                                ? "font-semibold text-primary"
-                                : "text-[#718079] hover:bg-[#F3F7F5] hover:text-primary-hover"
-                            }
-                        `}
-                    >
-                        Bulk Expense
-                    </NavLink>
-                </div>
-            )}
         </div>
     );
 }

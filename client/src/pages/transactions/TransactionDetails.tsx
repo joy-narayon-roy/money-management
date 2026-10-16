@@ -18,6 +18,7 @@ export default function TransactionDetails() {
     return (
         <>
             <div className='text-center'>Transaction Info : {transaction?.description || "Comming Soon!"}</div>
+            <div className='text-center'>{id}</div>
             <Link className='flex flex-row items-center mx-auto justify-center mt-5 gap-2 text-primary' to={"../"}><ArrowLeft size={18} /> Go Back</Link>
         </>
     )

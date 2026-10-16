@@ -14,7 +14,7 @@ export function BalanceCard({
   balance = 0,
   change = 0,
 }: BalanceCardProps) {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const formattedBalance = balance.toLocaleString(
     "en-BD",

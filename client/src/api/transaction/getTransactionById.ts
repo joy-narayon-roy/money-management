@@ -8,7 +8,7 @@ export default async function getTransactionByID(
     throw new Error("invalid token");
   }
 
-  const { data } = await api.get<Transaction>(`transactions/${id}`, {
+  const { data } = await api.get<Transaction>(`transaction/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

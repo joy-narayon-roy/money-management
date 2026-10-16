@@ -21,7 +21,7 @@ function Transactions() {
     const start_date = sp.get("start_date")
     const end_date = sp.get("end_date")
 
-    const { transactions, pagination, loading, error, goToPage } = useTransactions(token || "");
+    const { transactions, pagination, loading, error, goToPage, goToLimit } = useTransactions(token || "");
 
     const openPreview = () => {
         const json_str = JSON.stringify(transactions)
@@ -61,6 +61,10 @@ function Transactions() {
 
             return pre
         })
+    }
+
+    const updateLimit = (lim: number) => {
+        goToLimit(lim)
     }
 
     return (
@@ -114,7 +118,9 @@ function Transactions() {
                     <TransactionPagination
                         pagination={pagination}
                         openPreview={openPreview}
-                        goToPage={goToPage} />
+                        goToPage={goToPage}
+                        updateLimit={updateLimit}
+                    />
                 </section>
             </div>
         </main>

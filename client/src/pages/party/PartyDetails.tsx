@@ -13,13 +13,15 @@ import TransactionTableContainer from "../../components/transactionsPage/Transac
 
 import usePartyInfo from "../../hooks/usePartyInfo";
 import NoRecordsFound from "../../components/NoRecordsFound";
+import { compressToBase64 } from "lz-string";
+import { useNavigate } from "react-router-dom";
 
 
 
 
 function PartyDetails() {
     const { token = "" } = useSelector((state: RootState) => state.auth);
-
+    const nav = useNavigate()
     const {
         party: partyState,
         transaction: transactionState,
@@ -27,6 +29,20 @@ function PartyDetails() {
         goToPage,
         updateSort
     } = usePartyInfo(token)
+
+    const openPreview = () => {
+        const json_str = JSON.stringify(transactionState?.transactions || [])
+        const data_str = compressToBase64(json_str)
+
+        nav(`/preview?type=transaction`, {
+            state: {
+                type: "transaction",
+                data: data_str
+            },
+        })
+
+        // window.open(`/preview?${sp.toString()}`, "_blank")
+    }
 
     return (
         <main className="min-h-full bg-background">
@@ -62,7 +78,9 @@ function PartyDetails() {
                                 </div>
                                 <TransactionPagination
                                     pagination={transactionState.pagination}
-                                    goToPage={goToPage} />
+                                    goToPage={goToPage}
+                                    openPreview={openPreview}
+                                />
                             </>
                     }
 
